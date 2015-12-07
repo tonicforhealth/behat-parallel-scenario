@@ -1,0 +1,33 @@
+{
+    "name": "tonicforhealth/behat-parallel-scenario",
+    "authors": [
+        {
+            "name": "oleksii.storozhylov",
+            "email": "oleksii.storozhylov@tonicforhealth.com"
+        }
+    ],
+
+    "autoload": {
+        "psr-0": { "Tonic\\Behat": "src/" }
+    },
+
+    "require": {
+        "behat/behat" : "3.*",
+        "symfony/process": "^3.0"
+    },
+
+    "require-dev": {
+        "phpunit/phpunit": "4.1.*"
+    },
+
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/brandonroberts/Mailinator"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/tonicforhealth/MinkExtension"
+        }
+    ]
+}
