@@ -95,8 +95,10 @@ class ProcessExtractor
      */
     public function extract(ScenarioInfo $scenarioInfo)
     {
-        $options = $this->overrideOutputPath($this->options, md5((string) $scenarioInfo));
-        $commandLine = sprintf('%s %s %s %s', PHP_BINARY, $this->behatBinaryPath, implode(' ', $options), $scenarioInfo);
+        $fileLine = (string) $scenarioInfo;
+
+        $options = $this->overrideOutputPath($this->options, md5($fileLine));
+        $commandLine = sprintf('%s %s %s %s', PHP_BINARY, $this->behatBinaryPath, implode(' ', $options), escapeshellarg($fileLine));
 
         echo $commandLine, PHP_EOL;
 
