@@ -11,8 +11,8 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
-use Tonic\Behat\ParallelScenarioExtension\Cli\ParallelScenarioCommandLineExtractor;
 use Tonic\Behat\ParallelScenarioExtension\Cli\ParallelScenarioController;
+use Tonic\Behat\ParallelScenarioExtension\ProcessExtractor;
 
 /**
  * Class ParallelScenarioExtension.
@@ -21,7 +21,7 @@ use Tonic\Behat\ParallelScenarioExtension\Cli\ParallelScenarioController;
  */
 class ParallelScenarioExtension implements ExtensionInterface
 {
-    const COMMAND_LINE_EXTRACTOR = 'command_line_extractor';
+    const PROCESS_EXTRACTOR = 'parallel_scenario.process_extractor';
 
     const CONFIG_OPTIONS = 'options';
     const CONFIG_SKIP = 'skip';
@@ -38,7 +38,7 @@ class ParallelScenarioExtension implements ExtensionInterface
      */
     public function getConfigKey()
     {
-        return 'parallel-scenario';
+        return 'parallel_scenario';
     }
 
     /**
@@ -57,7 +57,6 @@ class ParallelScenarioExtension implements ExtensionInterface
             ->children()
             ->arrayNode(self::CONFIG_OPTIONS)
             ->addDefaultsIfNotSet()
-
             ->children()
             ->arrayNode(self::CONFIG_SKIP)
             ->prototype('scalar')
@@ -83,10 +82,12 @@ class ParallelScenarioExtension implements ExtensionInterface
     {
         $skipOptions = $config[self::CONFIG_OPTIONS][self::CONFIG_SKIP];
 
-        $definition = new Definition(ParallelScenarioCommandLineExtractor::class);
-        $definition->addMethodCall('addSkipOptions', $skipOptions);
+        $definition = new Definition(ProcessExtractor::class);
+        $definition->addMethodCall('addSkipOptions', [
+            $skipOptions,
+        ]);
 
-        $container->setDefinition(self::COMMAND_LINE_EXTRACTOR, $definition);
+        $container->setDefinition(self::PROCESS_EXTRACTOR, $definition);
     }
 
     /**
@@ -97,7 +98,7 @@ class ParallelScenarioExtension implements ExtensionInterface
         $definition = new Definition(ParallelScenarioController::class, [
             new Reference(SuiteExtension::REGISTRY_ID),
             new Reference(SpecificationExtension::FINDER_ID),
-            new Reference(self::COMMAND_LINE_EXTRACTOR),
+            new Reference(self::PROCESS_EXTRACTOR),
         ]);
         $definition->addTag(CliExtension::CONTROLLER_TAG, [
             'priority' => 0,

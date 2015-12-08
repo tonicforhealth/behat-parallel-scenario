@@ -1,21 +1,19 @@
 <?php
 
-namespace Tonic\Behat\ParallelScenarioExtension\Cli;
+namespace Tonic\Behat\ParallelScenarioExtension;
 
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Process\Process;
+use Tonic\Behat\ParallelScenarioExtension\Cli\ParallelScenarioController;
 
 /**
- * Class ParallelScenarioCommandLineExtractor.
+ * Class ProcessExtractor.
  *
  * @author kandelyabre <kandelyabre@gmail.com>
  */
-class ParallelScenarioCommandLineExtractor
+class ProcessExtractor
 {
-    /**
-     * @var InputDefinition
-     */
-    private $inputDefinition;
     /**
      * @var string
      */
@@ -37,13 +35,10 @@ class ParallelScenarioCommandLineExtractor
     private $outPath = [];
 
     /**
-     * BaseCommandLineExtractor constructor.
-     *
-     * @param InputDefinition $inputDefinition
+     * ParallelScenarioCommandLineExtractor constructor.
      */
-    public function __construct(InputDefinition $inputDefinition)
+    public function __construct()
     {
-        $this->inputDefinition = $inputDefinition;
         $this->behatBinaryPath = reset($_SERVER['argv']);
     }
 
@@ -56,15 +51,16 @@ class ParallelScenarioCommandLineExtractor
     }
 
     /**
-     * @param InputInterface $input
+     * @param InputDefinition $inputDefinition
+     * @param InputInterface  $input
      */
-    public function init(InputInterface $input)
+    public function init(InputDefinition $inputDefinition, InputInterface $input)
     {
         $options = [];
 
         $this->outPath = [];
 
-        foreach ($this->inputDefinition->getOptions() as $optionName => $inputOption) {
+        foreach ($inputDefinition->getOptions() as $optionName => $inputOption) {
             if (!in_array($optionName, $this->skipOptions)) {
                 $optionValue = $input->getOption($optionName);
                 if ($inputOption->getDefault() != $optionValue) {
@@ -93,18 +89,18 @@ class ParallelScenarioCommandLineExtractor
     }
 
     /**
-     * @param string $scenarioFileName
+     * @param ScenarioInfo $scenarioInfo
      *
-     * @return string
+     * @return Process
      */
-    public function getCommand($scenarioFileName)
+    public function extract(ScenarioInfo $scenarioInfo)
     {
-        $options = $this->overrideOutputPath($this->options, md5($scenarioFileName));
-        $commandLine = sprintf('%s %s %s %s', PHP_BINARY, $this->behatBinaryPath, implode(' ', $options), $scenarioFileName);
+        $options = $this->overrideOutputPath($this->options, md5((string) $scenarioInfo));
+        $commandLine = sprintf('%s %s %s %s', PHP_BINARY, $this->behatBinaryPath, implode(' ', $options), $scenarioInfo);
 
         echo $commandLine, PHP_EOL;
 
-        return $commandLine;
+        return new Process($commandLine);
     }
 
     /**

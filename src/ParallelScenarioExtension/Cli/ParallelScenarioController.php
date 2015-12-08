@@ -8,11 +8,13 @@ use Behat\Testwork\Specification\SpecificationFinder;
 use Behat\Testwork\Specification\SpecificationIterator;
 use Behat\Testwork\Suite\SuiteRepository;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
+use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
-use Tonic\Behat\ParallelScenarioExtension\ParallelScenarioFileLineExtractor;
+use Tonic\Behat\ParallelScenarioExtension\ScenarioInfoExtractor;
+use Tonic\Behat\ParallelScenarioExtension\ProcessExtractor;
 use Tonic\Behat\ParallelScenarioExtension\ProcessManager;
 
 /**
@@ -35,31 +37,37 @@ class ParallelScenarioController implements Controller
     private $specificationFinder;
 
     /**
-     * @var ParallelScenarioFileLineExtractor
+     * @var ScenarioInfoExtractor
      */
     private $scenarioFileLineExtractor;
     /**
-     * @var ParallelScenarioCommandLineExtractor
+     * @var ProcessExtractor
      */
-    private $baseCommandLineExtractor;
+    private $processExtractor;
     /**
      * @var ProcessManager
      */
     private $processManager;
+    /**
+     * @var InputDefinition
+     */
+    private $inputDefinition;
 
     /**
      * ParallelScenarioController constructor.
      *
-     * @param SuiteRepository                   $suiteRepository
-     * @param SpecificationFinder               $specificationFinder
-     * @param ParallelScenarioFileLineExtractor $scenarioFileLineExtractor
+     * @param SuiteRepository     $suiteRepository
+     * @param SpecificationFinder $specificationFinder
+     * @param ProcessExtractor    $processExtractor
      */
-    public function __construct(SuiteRepository $suiteRepository, SpecificationFinder $specificationFinder, ParallelScenarioFileLineExtractor $scenarioFileLineExtractor)
+    public function __construct(SuiteRepository $suiteRepository, SpecificationFinder $specificationFinder, ProcessExtractor $processExtractor)
     {
         $this->suiteRepository = $suiteRepository;
         $this->specificationFinder = $specificationFinder;
 
-        $this->scenarioFileLineExtractor = $scenarioFileLineExtractor;
+        $this->scenarioFileLineExtractor = new ScenarioInfoExtractor();
+        $this->processExtractor = $processExtractor;
+
         $this->processManager = new ProcessManager();
     }
 
@@ -69,7 +77,7 @@ class ParallelScenarioController implements Controller
     public function configure(SymfonyCommand $command)
     {
         $command->addOption(self::OPTION_PARALLEL_PROCESS, null, InputOption::VALUE_OPTIONAL, 'Max parallel processes amount', 1);
-        $this->baseCommandLineExtractor = new ParallelScenarioCommandLineExtractor($command->getDefinition());
+        $this->inputDefinition = $command->getDefinition();
     }
 
     /**
@@ -81,7 +89,7 @@ class ParallelScenarioController implements Controller
         $maxProcessesAmount = $input->getOption(self::OPTION_PARALLEL_PROCESS);
 
         if ($maxProcessesAmount > 1) {
-            $this->baseCommandLineExtractor->init($input);
+            $this->processExtractor->init($this->inputDefinition, $input);
             $this->processManager->setMaxParallelProcess($maxProcessesAmount);
             $this->processManager->setStopCallback(function (Process $process) use ($output) {
                 $output->writeln($process->getOutput());
@@ -101,7 +109,7 @@ class ParallelScenarioController implements Controller
                     foreach ($scenarioGroups as $scenarios) {
                         /** @var Process[] $processes */
                         $processes = array_map(function ($scenarioLineFile) {
-                            return new Process($this->baseCommandLineExtractor->getCommand($scenarioLineFile));
+                            return $this->processExtractor->extract($scenarioLineFile);
                         }, $scenarios);
 
                         $this->processManager->runParallel($processes);

@@ -11,7 +11,7 @@ use Behat\Gherkin\Node\ScenarioInterface;
  *
  * @author kandelyabre <kandelyabre@gmail.com>
  */
-class ParallelScenarioFileLineExtractor
+class ScenarioInfoExtractor
 {
     const TAG_PARALLEL_SCENARIO = 'parallel-scenario';
     const TAG_PARALLEL_WAIT = 'parallel-wait';
@@ -32,12 +32,12 @@ class ParallelScenarioFileLineExtractor
             switch (true) {
                 case $scenario instanceof OutlineNode && $this->isParallelExamples($scenario):
                     foreach ($scenario->getExamples() as $exampleNode) {
-                        $scenarios[] = sprintf(sprintf('%s:%s', $feature->getFile(), $exampleNode->getLine()));
+                        $scenarios[] = new ScenarioInfo($feature->getFile(), $exampleNode->getLine());
                     }
                     break;
                 case $scenario instanceof OutlineNode:
                 case $scenario instanceof ScenarioInterface:
-                    $scenarios[] = sprintf(sprintf('%s:%s', $feature->getFile(), $scenario->getLine()));
+                    $scenarios[] = new ScenarioInfo($feature->getFile(), $scenario->getLine());
                     break;
             }
 
