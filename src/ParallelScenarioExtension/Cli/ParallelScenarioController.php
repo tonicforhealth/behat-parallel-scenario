@@ -50,15 +50,16 @@ class ParallelScenarioController implements Controller
     /**
      * ParallelScenarioController constructor.
      *
-     * @param SpecificationFinder $specificationFinder
-     * @param SuiteRepository     $suiteRepository
+     * @param SuiteRepository                   $suiteRepository
+     * @param SpecificationFinder               $specificationFinder
+     * @param ParallelScenarioFileLineExtractor $scenarioFileLineExtractor
      */
-    public function __construct(SuiteRepository $suiteRepository, SpecificationFinder $specificationFinder)
+    public function __construct(SuiteRepository $suiteRepository, SpecificationFinder $specificationFinder, ParallelScenarioFileLineExtractor $scenarioFileLineExtractor)
     {
         $this->suiteRepository = $suiteRepository;
         $this->specificationFinder = $specificationFinder;
 
-        $this->scenarioFileLineExtractor = new ParallelScenarioFileLineExtractor();
+        $this->scenarioFileLineExtractor = $scenarioFileLineExtractor;
         $this->processManager = new ProcessManager();
     }
 

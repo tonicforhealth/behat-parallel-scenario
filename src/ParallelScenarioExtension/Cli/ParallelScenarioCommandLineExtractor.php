@@ -48,6 +48,14 @@ class ParallelScenarioCommandLineExtractor
     }
 
     /**
+     * @param array $options
+     */
+    public function addSkipOptions(array $options)
+    {
+        $this->skipOptions = array_unique(array_merge($this->skipOptions, $options));
+    }
+
+    /**
      * @param InputInterface $input
      */
     public function init(InputInterface $input)
