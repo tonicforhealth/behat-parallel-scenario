@@ -6,11 +6,35 @@ Install via composer
 
 # Config
 
-Load extenstion into config:
+#### Load extenstion into config:
 
     default:
         extensions:
             Tonic\Behat\ParallelScenarioExtension: ~
+#### or
+
+    default:
+        extensions:
+            Tonic\Behat\ParallelScenarioExtension:
+                options:
+                    skip:
+                        - any-behat-option-for-skiping-in-worker
+
+#### Mark scenarios with tags
+* run scenario in parallel
+
+
+    @parallel-scenario
+
+* wait all parallel scenarios are done
+
+
+    @parallel-wait
+
+* run examples in parallel
+
+
+    @parallel-examples
 
 # Run
 
@@ -20,4 +44,4 @@ When parameter is ebsent or equal to 1 then test will be run in usual mode
 
 # Todo
 * Different environments for each worker
-* tests
+* testsRE
