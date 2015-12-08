@@ -69,6 +69,6 @@ class ParallelScenarioExtension implements ExtensionInterface
         $definition->addTag(CliExtension::CONTROLLER_TAG, [
             'priority' => 0,
         ]);
-        $container->setDefinition(CliExtension::CONTROLLER_TAG.'.dry-run', $definition);
+        $container->setDefinition(CliExtension::CONTROLLER_TAG.'.parallel-scenario', $definition);
     }
 }
