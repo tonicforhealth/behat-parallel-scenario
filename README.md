@@ -44,4 +44,4 @@ When parameter is ebsent or equal to 1 then test will be run in usual mode
 
 # Todo
 * Different environments for each worker
-* testsRE
+* tests
