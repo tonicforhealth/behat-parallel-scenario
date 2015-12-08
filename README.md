@@ -40,7 +40,7 @@ Install via composer
 
     php bin/behat --parallel-process 2
 
-When parameter is ebsent or equal to 1 then test will be run in usual mode
+When parameter is absent or equal to 1 then test will be run in usual mode
 
 # Todo
 * Different environments for each worker
