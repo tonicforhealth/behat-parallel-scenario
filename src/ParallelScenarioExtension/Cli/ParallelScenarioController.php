@@ -3,6 +3,7 @@
 namespace Tonic\Behat\ParallelScenarioExtension\Cli;
 
 use Behat\Testwork\Cli\Controller;
+use Behat\Testwork\EventDispatcher\TestworkEventDispatcher;
 use Behat\Testwork\Specification\GroupedSpecificationIterator;
 use Behat\Testwork\Specification\SpecificationFinder;
 use Behat\Testwork\Specification\SpecificationIterator;
@@ -52,22 +53,27 @@ class ParallelScenarioController implements Controller
      * @var InputDefinition
      */
     private $inputDefinition;
+    /**
+     * @var TestworkEventDispatcher
+     */
+    private $eventDispatcher;
 
     /**
      * ParallelScenarioController constructor.
      *
-     * @param SuiteRepository     $suiteRepository
-     * @param SpecificationFinder $specificationFinder
-     * @param ProcessExtractor    $processExtractor
+     * @param SuiteRepository         $suiteRepository
+     * @param SpecificationFinder     $specificationFinder
+     * @param ProcessExtractor        $processExtractor
+     * @param TestworkEventDispatcher $eventDispatcher
      */
-    public function __construct(SuiteRepository $suiteRepository, SpecificationFinder $specificationFinder, ProcessExtractor $processExtractor)
+    public function __construct(SuiteRepository $suiteRepository, SpecificationFinder $specificationFinder, ProcessExtractor $processExtractor, TestworkEventDispatcher $eventDispatcher)
     {
         $this->suiteRepository = $suiteRepository;
         $this->specificationFinder = $specificationFinder;
+        $this->processExtractor = $processExtractor;
+        $this->eventDispatcher = $eventDispatcher;
 
         $this->scenarioFileLineExtractor = new ScenarioInfoExtractor();
-        $this->processExtractor = $processExtractor;
-
         $this->processManager = new ProcessManager();
     }
 
@@ -108,6 +114,7 @@ class ParallelScenarioController implements Controller
 
             foreach (GroupedSpecificationIterator::group($specifications) as $iterator) {
                 foreach ($iterator as $featureNode) {
+                    $this->eventDispatcher->dispatch('parallel_scenario.feature_tested.before');
                     $scenarioGroups = $this->scenarioFileLineExtractor->extract($featureNode);
 
                     foreach ($scenarioGroups as $scenarios) {
@@ -122,6 +129,7 @@ class ParallelScenarioController implements Controller
                             $result = max($result, $process->getExitCode());
                         }
                     }
+                    $this->eventDispatcher->dispatch('parallel_scenario.feature_tested.after');
                 }
             }
         }
