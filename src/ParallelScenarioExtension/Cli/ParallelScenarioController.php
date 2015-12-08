@@ -92,8 +92,12 @@ class ParallelScenarioController implements Controller
             $this->processExtractor->init($this->inputDefinition, $input);
             $this->processManager->setMaxParallelProcess($maxProcessesAmount);
             $this->processManager->setStopCallback(function (Process $process) use ($output) {
-                $output->writeln($process->getOutput());
-                $output->writeln($process->getErrorOutput());
+                if ($process->getExitCode()) {
+                    $output->writeln(sprintf('<comment>%s</comment>', $process->getOutput()));
+                    $output->writeln(sprintf('<error>%s</error>', $process->getErrorOutput()));
+                } else {
+                    $output->writeln(sprintf('<info>%s</info>', $process->getOutput()));
+                }
             });
 
             $locator = $input->getArgument('paths');
