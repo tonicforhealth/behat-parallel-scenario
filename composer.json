@@ -8,7 +8,7 @@
     ],
 
     "autoload": {
-        "psr-0": { "Tonic\\Behat": "src/" }
+        "psr-0": { "Tonic\\Behat\\": "src/" }
     },
 
     "require": {
