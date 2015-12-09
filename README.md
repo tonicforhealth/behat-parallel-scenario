@@ -16,6 +16,10 @@ Install via composer
     default:
         extensions:
             Tonic\Behat\ParallelScenarioExtension:
+                profiles:
+                    - profile_name_for_worker_1
+                    - profile_name_for_worker_2
+                    - profile_name_for_worker_3
                 options:
                     skip:
                         - any-behat-option-for-skiping-in-worker
@@ -43,6 +47,5 @@ Install via composer
 When parameter is absent or equal to 1 then test will be run in usual mode
 
 # Todo
-* Different environments for each worker
 * tests
 * add support for --stop-on-failure option

@@ -25,6 +25,7 @@ class ParallelScenarioExtension implements ExtensionInterface
 
     const CONFIG_OPTIONS = 'options';
     const CONFIG_SKIP = 'skip';
+    const CONFIG_PROFILES = 'profiles';
 
     /**
      * {@inheritdoc}
@@ -63,6 +64,12 @@ class ParallelScenarioExtension implements ExtensionInterface
             ->end()
             ->defaultValue([])
             ->end();
+
+        $builder
+            ->children()
+            ->arrayNode(self::CONFIG_PROFILES)
+            ->prototype('scalar')
+            ->end();
     }
 
     /**
@@ -71,14 +78,14 @@ class ParallelScenarioExtension implements ExtensionInterface
     public function load(ContainerBuilder $container, array $config)
     {
         $this->loadCommandLineExtractor($container, $config);
-        $this->loadController($container);
+        $this->loadController($container, $config);
     }
 
     /**
      * @param ContainerBuilder $container
      * @param array            $config
      */
-    public function loadCommandLineExtractor(ContainerBuilder $container, array $config)
+    protected function loadCommandLineExtractor(ContainerBuilder $container, array $config)
     {
         $skipOptions = $config[self::CONFIG_OPTIONS][self::CONFIG_SKIP];
 
@@ -92,9 +99,12 @@ class ParallelScenarioExtension implements ExtensionInterface
 
     /**
      * @param ContainerBuilder $container
+     * @param array            $config
      */
-    protected function loadController(ContainerBuilder $container)
+    protected function loadController(ContainerBuilder $container, array $config)
     {
+        $profiles = $config[self::CONFIG_PROFILES];
+
         $definition = new Definition(ParallelScenarioController::class, [
             new Reference(SuiteExtension::REGISTRY_ID),
             new Reference(SpecificationExtension::FINDER_ID),
@@ -102,8 +112,12 @@ class ParallelScenarioExtension implements ExtensionInterface
             new Reference('event_dispatcher'),
         ]);
         $definition->addTag(CliExtension::CONTROLLER_TAG, [
-            'priority' => 0,
+            'priority' => 1,
+        ]);
+        $definition->addMethodCall('setProfiles', [
+            $profiles,
         ]);
         $container->setDefinition(CliExtension::CONTROLLER_TAG.'.parallel-scenario', $definition);
     }
+
 }

@@ -23,6 +23,7 @@ class ProcessExtractor
      */
     private $skipOptions = [
         ParallelScenarioController::OPTION_PARALLEL_PROCESS,
+        'profile',
     ];
     /**
      * @var array

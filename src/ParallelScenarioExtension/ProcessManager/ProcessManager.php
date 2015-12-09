@@ -104,11 +104,15 @@ class ProcessManager
         while (!empty($this->processesQueue) && count($this->activeProcesses) < $this->maxParallelProcess) {
             /** @var Process $process */
             $process = array_shift($this->processesQueue);
-            $this->eventDispatcher->dispatch(self::EVENT_PROCESS_BEFORE_START, new ProcessEvent($process));
+            $this->activeProcesses[] = $process;
+
+            end($this->activeProcesses);
+            $processIndex = key($this->activeProcesses);
+
+            $this->eventDispatcher->dispatch(self::EVENT_PROCESS_BEFORE_START, new ProcessBeforeStartEvent($process, $processIndex));
             $process->start(function ($outType, $outData) use ($process) {
                 $this->eventDispatcher->dispatch(self::EVENT_PROCESS_OUT, new ProcessOutEvent($process, $outType, $outData));
             });
-            $this->activeProcesses[] = $process;
         }
     }
 
@@ -117,6 +121,7 @@ class ProcessManager
         foreach ($this->activeProcesses as $index => $process) {
             if (!$process->isRunning()) {
                 unset($this->activeProcesses[$index]);
+
                 $this->doneProcesses[] = $process;
 
                 $this->eventDispatcher->dispatch(self::EVENT_PROCESS_STOP, new ProcessEvent($process));
