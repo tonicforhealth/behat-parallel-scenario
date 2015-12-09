@@ -2,7 +2,7 @@
 
 Install via composer
 ```bash
-composer require tonicforhealth/behat-parallel-scenario
+$ composer require tonicforhealth/behat-parallel-scenario
 ```
 # Config
 
@@ -44,7 +44,7 @@ default:
 ```
 # Run
 ```bash
-php bin/behat --parallel-process 2
+$ bin/behat --parallel-process 2
 ```
 When parameter is absent or equal to 1 then test will be run in usual mode
 
