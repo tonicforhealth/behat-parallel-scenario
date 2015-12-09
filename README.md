@@ -29,22 +29,22 @@ default:
 * run scenario in parallel
 
 ```
-    @parallel-scenario
+@parallel-scenario
 ```
 
 * wait all parallel scenarios are done
 
 ```
-    @parallel-wait
+@parallel-wait
 ```
 * run examples in parallel
 
 ```
-    @parallel-examples
+@parallel-examples
 ```
 # Run
 ```bash
-    php bin/behat --parallel-process 2
+php bin/behat --parallel-process 2
 ```
 When parameter is absent or equal to 1 then test will be run in usual mode
 
