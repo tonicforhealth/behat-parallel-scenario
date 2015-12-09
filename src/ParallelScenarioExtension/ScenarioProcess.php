@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Tonic\Behat\ParallelScenarioExtension;
-
 
 use Symfony\Component\Process\Process;
 
@@ -34,5 +32,4 @@ class ScenarioProcess extends Process
         $this->scenarioInfo = $scenarioInfo;
         parent::__construct($commandline, $cwd, $env, $input, $timeout, $options);
     }
-
 }
