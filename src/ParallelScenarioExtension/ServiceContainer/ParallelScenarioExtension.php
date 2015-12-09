@@ -119,5 +119,4 @@ class ParallelScenarioExtension implements ExtensionInterface
         ]);
         $container->setDefinition(CliExtension::CONTROLLER_TAG.'.parallel-scenario', $definition);
     }
-
 }
