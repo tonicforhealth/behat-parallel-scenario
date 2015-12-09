@@ -45,3 +45,4 @@ When parameter is absent or equal to 1 then test will be run in usual mode
 # Todo
 * Different environments for each worker
 * tests
+* add support for --stop-on-failure option
