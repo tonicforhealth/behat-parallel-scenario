@@ -14,9 +14,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
-use Tonic\Behat\ParallelScenarioExtension\ScenarioInfoExtractor;
 use Tonic\Behat\ParallelScenarioExtension\ProcessExtractor;
-use Tonic\Behat\ParallelScenarioExtension\ProcessManager;
+use Tonic\Behat\ParallelScenarioExtension\ProcessManager\ProcessEvent;
+use Tonic\Behat\ParallelScenarioExtension\ProcessManager\ProcessManager;
+use Tonic\Behat\ParallelScenarioExtension\ScenarioInfoExtractor;
 
 /**
  * Class ParallelScenarioController.
@@ -97,13 +98,18 @@ class ParallelScenarioController implements Controller
         if ($maxProcessesAmount > 1) {
             $this->processExtractor->init($this->inputDefinition, $input);
             $this->processManager->setMaxParallelProcess($maxProcessesAmount);
-            $this->processManager->setStopCallback(function (Process $process) use ($output) {
+            $this->processManager->getEventDispatcher()->addListener(ProcessManager::EVENT_PROCESS_STOP, function (ProcessEvent $event) use ($output) {
+                $process = $event->getProcess();
                 if ($process->getExitCode()) {
                     $output->writeln(sprintf('<comment>%s</comment>', $process->getOutput()));
                     $output->writeln(sprintf('<error>%s</error>', $process->getErrorOutput()));
                 } else {
                     $output->writeln(sprintf('<info>%s</info>', $process->getOutput()));
                 }
+            });
+            $this->processManager->getEventDispatcher()->addListener(ProcessManager::EVENT_PROCESS_BEFORE_START, function (ProcessEvent $event) use ($output) {
+                $process = $event->getProcess();
+                $output->writeln(sprintf('START ::: %s', $process->getCommandLine()));
             });
 
             $locator = $input->getArgument('paths');

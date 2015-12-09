@@ -100,9 +100,7 @@ class ProcessExtractor
         $options = $this->overrideOutputPath($this->options, md5($fileLine));
         $commandLine = sprintf('%s %s %s %s', PHP_BINARY, $this->behatBinaryPath, implode(' ', $options), escapeshellarg($fileLine));
 
-        echo $commandLine, PHP_EOL;
-
-        return new Process($commandLine);
+        return new ScenarioProcess($scenarioInfo, $commandLine);
     }
 
     /**

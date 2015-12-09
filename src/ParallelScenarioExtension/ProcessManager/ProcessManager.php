@@ -1,7 +1,8 @@
 <?php
 
-namespace Tonic\Behat\ParallelScenarioExtension;
+namespace Tonic\Behat\ParallelScenarioExtension\ProcessManager;
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Process\Process;
 
 /**
@@ -11,6 +12,14 @@ use Symfony\Component\Process\Process;
  */
 class ProcessManager
 {
+    const EVENT_PROCESS_STOP = 'process_manager.process.stop';
+    const EVENT_PROCESS_BEFORE_START = 'process_manager.process.start.before';
+    const EVENT_PROCESS_OUT = 'process_manager.process.out';
+
+    /**
+     * @var EventDispatcher
+     */
+    protected $eventDispatcher;
     /**
      * @var Process[]
      */
@@ -31,15 +40,28 @@ class ProcessManager
      * @var int
      */
     protected $poll = 1000;
-    /**
-     * @var callable|null
-     */
-    protected $callback = null;
 
     /**
-     * @var callable|null
+     * ProcessManager constructor.
+     *
+     * @param EventDispatcher|null $eventDispatcher
      */
-    protected $stopCallback = null;
+    public function __construct(EventDispatcher $eventDispatcher = null)
+    {
+        if (!$eventDispatcher) {
+            $eventDispatcher = new EventDispatcher();
+        }
+
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
+    /**
+     * @return EventDispatcher
+     */
+    public function getEventDispatcher()
+    {
+        return $this->eventDispatcher;
+    }
 
     /**
      * @param Process[] $processes
@@ -82,7 +104,10 @@ class ProcessManager
         while (!empty($this->processesQueue) && count($this->activeProcesses) < $this->maxParallelProcess) {
             /** @var Process $process */
             $process = array_shift($this->processesQueue);
-            $process->start($this->callback);
+            $this->eventDispatcher->dispatch(self::EVENT_PROCESS_BEFORE_START, new ProcessEvent($process));
+            $process->start(function ($outType, $outData) use ($process) {
+                $this->eventDispatcher->dispatch(self::EVENT_PROCESS_OUT, new ProcessOutEvent($process, $outType, $outData));
+            });
             $this->activeProcesses[] = $process;
         }
     }
@@ -93,27 +118,10 @@ class ProcessManager
             if (!$process->isRunning()) {
                 unset($this->activeProcesses[$index]);
                 $this->doneProcesses[] = $process;
-                if ($callback = $this->stopCallback) {
-                    $callback($process);
-                }
+
+                $this->eventDispatcher->dispatch(self::EVENT_PROCESS_STOP, new ProcessEvent($process));
             }
         }
-    }
-
-    /**
-     * @param callable|null $callback
-     */
-    public function setCallback(callable $callback = null)
-    {
-        $this->callback = $callback;
-    }
-
-    /**
-     * @param callable|null $stopCallback
-     */
-    public function setStopCallback(callable $stopCallback = null)
-    {
-        $this->stopCallback = $stopCallback;
     }
 
     /**
