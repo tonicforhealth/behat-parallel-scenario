@@ -106,6 +106,7 @@ class ParallelScenarioController implements Controller
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        $stopOnFailure = $input->getOption('stop-on-failure');
         if (!$this->profiles && $profile = $input->getOption('profile')) {
             $this->setProfiles([
                 $profile,
@@ -118,21 +119,35 @@ class ParallelScenarioController implements Controller
         if ($maxProcessesAmount > 1) {
             $this->processExtractor->init($this->inputDefinition, $input);
             $this->processManager->setMaxParallelProcess($maxProcessesAmount);
+
             $this->processManager->getEventDispatcher()->addListener(ProcessAfterStopEvent::EVENT_NAME, function (ProcessAfterStopEvent $event) use ($output) {
+                /** @var ScenarioProcess $process */
                 $process = $event->getProcess();
-                if ($process->getExitCode()) {
+                if ($process->withError()) {
                     $output->writeln(sprintf('<comment>%s</comment>', $process->getOutput()));
                     $output->writeln(sprintf('<error>%s</error>', $process->getErrorOutput()));
                 } else {
                     $output->writeln(sprintf('<info>%s</info>', $process->getOutput()));
                 }
             });
+
             $this->processManager->getEventDispatcher()->addListener(ProcessBeforeStartEvent::EVENT_NAME, function (ProcessBeforeStartEvent $event) use ($output, $maxProcessesAmount) {
                 /** @var ScenarioProcess $process */
                 $process = $event->getProcess();
                 $process->setProfile($this->getProfileByWorkerIndex($event->getProcessIndex()));
                 $output->writeln(sprintf('START ::: %s', $process->getCommandLine()));
             });
+
+            if ($stopOnFailure) {
+                $this->processManager->getEventDispatcher()->addListener(ProcessAfterStopEvent::EVENT_NAME, function (ProcessAfterStopEvent $event) {
+                    /** @var ScenarioProcess $process */
+                    $process = $event->getProcess();
+                    if ($process->withError()) {
+                        $this->processManager->stop();
+                        exit(1);
+                    }
+                }, -1);
+            }
 
             $locator = $input->getArgument('paths');
 

@@ -68,4 +68,12 @@ class ScenarioProcess extends Process
 
         return parent::setCommandLine($this->getCommandLineWithProfile());
     }
+
+    /**
+     * @return bool
+     */
+    public function withError()
+    {
+        return (bool) $this->getExitCode();
+    }
 }
