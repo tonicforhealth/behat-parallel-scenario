@@ -14,10 +14,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
+use Tonic\Behat\ParallelScenarioExtension\ParallelProcessRunner\Event\ProcessAfterStopEvent;
+use Tonic\Behat\ParallelScenarioExtension\ParallelProcessRunner\Event\ProcessBeforeStartEvent;
+use Tonic\Behat\ParallelScenarioExtension\ParallelProcessRunner\ParallelProcessRunner;
 use Tonic\Behat\ParallelScenarioExtension\ProcessExtractor;
-use Tonic\Behat\ParallelScenarioExtension\ProcessManager\ProcessBeforeStartEvent;
-use Tonic\Behat\ParallelScenarioExtension\ProcessManager\ProcessEvent;
-use Tonic\Behat\ParallelScenarioExtension\ProcessManager\ProcessManager;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioInfoExtractor;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess;
 
@@ -49,7 +49,7 @@ class ParallelScenarioController implements Controller
      */
     private $processExtractor;
     /**
-     * @var ProcessManager
+     * @var ParallelProcessRunner
      */
     private $processManager;
     /**
@@ -81,7 +81,7 @@ class ParallelScenarioController implements Controller
         $this->eventDispatcher = $eventDispatcher;
 
         $this->scenarioFileLineExtractor = new ScenarioInfoExtractor();
-        $this->processManager = new ProcessManager();
+        $this->processManager = new ParallelProcessRunner();
     }
 
     /**
@@ -118,7 +118,7 @@ class ParallelScenarioController implements Controller
         if ($maxProcessesAmount > 1) {
             $this->processExtractor->init($this->inputDefinition, $input);
             $this->processManager->setMaxParallelProcess($maxProcessesAmount);
-            $this->processManager->getEventDispatcher()->addListener(ProcessManager::EVENT_PROCESS_STOP, function (ProcessEvent $event) use ($output) {
+            $this->processManager->getEventDispatcher()->addListener(ProcessAfterStopEvent::EVENT_NAME, function (ProcessAfterStopEvent $event) use ($output) {
                 $process = $event->getProcess();
                 if ($process->getExitCode()) {
                     $output->writeln(sprintf('<comment>%s</comment>', $process->getOutput()));
@@ -127,7 +127,7 @@ class ParallelScenarioController implements Controller
                     $output->writeln(sprintf('<info>%s</info>', $process->getOutput()));
                 }
             });
-            $this->processManager->getEventDispatcher()->addListener(ProcessManager::EVENT_PROCESS_BEFORE_START, function (ProcessBeforeStartEvent $event) use ($output, $maxProcessesAmount) {
+            $this->processManager->getEventDispatcher()->addListener(ProcessBeforeStartEvent::EVENT_NAME, function (ProcessBeforeStartEvent $event) use ($output, $maxProcessesAmount) {
                 /** @var ScenarioProcess $process */
                 $process = $event->getProcess();
                 $process->setProfile($this->getProfileByWorkerIndex($event->getProcessIndex()));
@@ -151,7 +151,7 @@ class ParallelScenarioController implements Controller
                             return $this->processExtractor->extract($scenarioLineFile);
                         }, $scenarios);
 
-                        $this->processManager->runParallel($processes);
+                        $this->processManager->reset()->add($processes)->run();
 
                         foreach ($processes as $process) {
                             $result = max($result, $process->getExitCode());

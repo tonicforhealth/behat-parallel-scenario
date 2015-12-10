@@ -1,16 +1,15 @@
 <?php
 
-namespace Tonic\Behat\ParallelScenarioExtension\ProcessManager;
+namespace Tonic\Behat\ParallelScenarioExtension\ParallelProcessRunner\Exception;
 
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Process\Process;
 
 /**
- * Class ProcessEvent.
+ * Class ProcessesMustBeInReadyStatusException.
  *
  * @author kandelyabre <kandelyabre@gmail.com>
  */
-class ProcessEvent extends Event
+class ProcessesMustBeInReadyStatusException extends AbstractProcessException
 {
     /**
      * @var Process
@@ -18,7 +17,7 @@ class ProcessEvent extends Event
     private $process;
 
     /**
-     * ProcessEvent constructor.
+     * ProcessesMustBeInReadyStatusException constructor.
      *
      * @param Process $process
      */

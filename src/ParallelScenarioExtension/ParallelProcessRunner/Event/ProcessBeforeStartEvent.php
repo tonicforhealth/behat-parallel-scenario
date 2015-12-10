@@ -1,6 +1,6 @@
 <?php
 
-namespace Tonic\Behat\ParallelScenarioExtension\ProcessManager;
+namespace Tonic\Behat\ParallelScenarioExtension\ParallelProcessRunner\Event;
 
 use Symfony\Component\Process\Process;
 
@@ -9,8 +9,10 @@ use Symfony\Component\Process\Process;
  *
  * @author kandelyabre <kandelyabre@gmail.com>
  */
-class ProcessBeforeStartEvent extends ProcessEvent
+class ProcessBeforeStartEvent extends AbstractProcessEvent
 {
+    const EVENT_NAME = 'parallel_process_runner.process.start.before';
+
     /**
      * @var int
      */
