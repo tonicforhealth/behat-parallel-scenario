@@ -13,8 +13,11 @@ use Tonic\Behat\ParallelScenarioExtension\ParallelProcessRunner\Exception\Proces
 class ProcessQueueCollection extends ProcessCollection
 {
     /**
+     * {@inheritdoc}
+     *
      * @param Process|Process[]|ProcessCollection|array $process
-     *                                                           {@inheritdoc}
+     *
+     * @return array|int
      *
      * @throws ProcessesMustBeInReadyStatusException
      */
@@ -22,21 +25,21 @@ class ProcessQueueCollection extends ProcessCollection
     {
         switch (true) {
             case is_array($process):
-                array_walk($process, function ($process) {
-                    $this->add($process);
-                });
+                $result = array_map(function ($process) {
+                    return $this->add($process);
+                }, $process);
                 break;
             case $process instanceof ProcessCollection:
-                $this->add($process->toArray());
+                $result = $this->add($process->toArray());
                 break;
             case $process instanceof Process:
                 if ($process->getStatus() != Process::STATUS_READY) {
                     throw new ProcessesMustBeInReadyStatusException($process);
                 }
             default:
-                $this->add($process);
+                $result = parent::add($process);
         }
 
-        return parent::add($process);
+        return $result;
     }
 }

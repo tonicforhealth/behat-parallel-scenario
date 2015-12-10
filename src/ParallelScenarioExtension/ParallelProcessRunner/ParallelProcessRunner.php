@@ -193,4 +193,22 @@ class ParallelProcessRunner
     {
         return !$this->activeProcesses->isEmpty();
     }
+
+    /**
+     * @return $this
+     */
+    public function stop()
+    {
+        $this->processesQueue->clear();
+        foreach ($this->activeProcesses->toArray() as $process) {
+            $process->stop(0);
+        }
+
+        return $this->stopProcesses();
+    }
+
+    public function __destruct()
+    {
+        $this->stop();
+    }
 }
