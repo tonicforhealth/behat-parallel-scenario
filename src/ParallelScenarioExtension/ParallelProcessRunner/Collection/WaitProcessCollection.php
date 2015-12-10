@@ -6,11 +6,11 @@ use Symfony\Component\Process\Process;
 use Tonic\Behat\ParallelScenarioExtension\ParallelProcessRunner\Exception\ProcessesMustBeInReadyStatusException;
 
 /**
- * Class ProcessQueueCollection.
+ * Class WaitProcessCollection.
  *
  * @author kandelyabre <kandelyabre@gmail.com>
  */
-class ProcessQueueCollection extends ProcessCollection
+class WaitProcessCollection extends ProcessCollection
 {
     /**
      * {@inheritdoc}

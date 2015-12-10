@@ -5,7 +5,7 @@ namespace Tonic\Behat\ParallelScenarioExtension\ParallelProcessRunner;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Process\Process;
 use Tonic\Behat\ParallelScenarioExtension\ParallelProcessRunner\Collection\ProcessCollection;
-use Tonic\Behat\ParallelScenarioExtension\ParallelProcessRunner\Collection\ProcessQueueCollection;
+use Tonic\Behat\ParallelScenarioExtension\ParallelProcessRunner\Collection\WaitProcessCollection;
 use Tonic\Behat\ParallelScenarioExtension\ParallelProcessRunner\Event\ProcessAfterStopEvent;
 use Tonic\Behat\ParallelScenarioExtension\ParallelProcessRunner\Event\ProcessBeforeStartEvent;
 use Tonic\Behat\ParallelScenarioExtension\ParallelProcessRunner\Event\ProcessOutEvent;
@@ -24,17 +24,17 @@ class ParallelProcessRunner
      */
     protected $eventDispatcher;
     /**
-     * @var ProcessQueueCollection
+     * @var WaitProcessCollection
      */
-    protected $processesQueue;
+    protected $waitProcessCollection;
     /**
      * @var ProcessCollection
      */
-    protected $activeProcesses;
+    protected $activeProcessCollection;
     /**
      * @var ProcessCollection
      */
-    protected $doneProcesses;
+    protected $doneProcessCollection;
     /**
      * maximum processes in parallel
      *
@@ -60,9 +60,9 @@ class ParallelProcessRunner
         }
 
         $this->eventDispatcher = $eventDispatcher;
-        $this->processesQueue = new ProcessQueueCollection();
-        $this->activeProcesses = new ProcessCollection();
-        $this->doneProcesses = new ProcessCollection();
+        $this->waitProcessCollection = new WaitProcessCollection();
+        $this->activeProcessCollection = new ProcessCollection();
+        $this->doneProcessCollection = new ProcessCollection();
     }
 
     /**
@@ -106,7 +106,7 @@ class ParallelProcessRunner
      */
     public function add($processes)
     {
-        $this->processesQueue->add($processes);
+        $this->waitProcessCollection->add($processes);
 
         return $this;
     }
@@ -116,9 +116,9 @@ class ParallelProcessRunner
      */
     public function run()
     {
-        while ($this->stopProcesses()->startProcesses()->wait()->isRunning());
+        while ($this->purgeDoneProcesses()->startWaitingProcesses()->waitBeforeStatusCheck()->isRunning());
 
-        return $this->doneProcesses->toArray();
+        return $this->doneProcessCollection->toArray();
     }
 
     /**
@@ -126,12 +126,12 @@ class ParallelProcessRunner
      *
      * @throws NotProcessException
      */
-    protected function startProcesses()
+    protected function startWaitingProcesses()
     {
-        $required = max(0, $this->maxParallelProcess - $this->activeProcesses->count());
+        $required = max(0, $this->maxParallelProcess - $this->activeProcessCollection->count());
 
-        foreach ($this->processesQueue->spliceByStatus(Process::STATUS_READY, $required) as $process) {
-            $processIndex = $this->activeProcesses->add($process);
+        foreach ($this->waitProcessCollection->spliceByStatus(Process::STATUS_READY, $required) as $process) {
+            $processIndex = $this->activeProcessCollection->add($process);
 
             $this->getEventDispatcher()->dispatch(ProcessBeforeStartEvent::EVENT_NAME, new ProcessBeforeStartEvent($process, $processIndex));
             $process->start(function ($outType, $outData) use ($process) {
@@ -147,15 +147,15 @@ class ParallelProcessRunner
      *
      * @throws NotProcessException
      */
-    protected function stopProcesses()
+    protected function purgeDoneProcesses()
     {
         $processes = array_merge(
-            $this->activeProcesses->spliceByStatus(Process::STATUS_READY),
-            $this->activeProcesses->spliceByStatus(Process::STATUS_TERMINATED)
+            $this->activeProcessCollection->spliceByStatus(Process::STATUS_READY),
+            $this->activeProcessCollection->spliceByStatus(Process::STATUS_TERMINATED)
         );
 
         foreach ($processes as $process) {
-            $this->doneProcesses->add($process);
+            $this->doneProcessCollection->add($process);
             $this->getEventDispatcher()->dispatch(ProcessAfterStopEvent::EVENT_NAME, new ProcessAfterStopEvent($process));
         }
 
@@ -167,9 +167,9 @@ class ParallelProcessRunner
      */
     public function reset()
     {
-        $this->processesQueue->clear();
-        $this->activeProcesses->clear();
-        $this->doneProcesses->clear();
+        $this->waitProcessCollection->clear();
+        $this->activeProcessCollection->clear();
+        $this->doneProcessCollection->clear();
 
         return $this;
     }
@@ -177,9 +177,9 @@ class ParallelProcessRunner
     /**
      * @return $this
      */
-    protected function wait()
+    protected function waitBeforeStatusCheck()
     {
-        if (!$this->activeProcesses->isEmpty()) {
+        if (!$this->activeProcessCollection->isEmpty()) {
             usleep($this->statusCheckWait);
         }
 
@@ -191,7 +191,7 @@ class ParallelProcessRunner
      */
     protected function isRunning()
     {
-        return !$this->activeProcesses->isEmpty();
+        return !$this->activeProcessCollection->isEmpty();
     }
 
     /**
@@ -199,12 +199,12 @@ class ParallelProcessRunner
      */
     public function stop()
     {
-        $this->processesQueue->clear();
-        foreach ($this->activeProcesses->toArray() as $process) {
+        $this->waitProcessCollection->clear();
+        foreach ($this->activeProcessCollection->toArray() as $process) {
             $process->stop(0);
         }
 
-        return $this->stopProcesses();
+        return $this->purgeDoneProcesses();
     }
 
     public function __destruct()
