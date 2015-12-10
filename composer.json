@@ -13,7 +13,7 @@
 
     "require": {
         "behat/behat" : "3.*",
-        "symfony/process": "^3.0"
+        "tonicforhealth/parallel-process-runner" : "1.*"
     },
 
     "require-dev": {

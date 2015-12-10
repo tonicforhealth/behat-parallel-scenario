@@ -14,12 +14,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
-use Tonic\Behat\ParallelScenarioExtension\ParallelProcessRunner\Event\ProcessAfterStopEvent;
-use Tonic\Behat\ParallelScenarioExtension\ParallelProcessRunner\Event\ProcessBeforeStartEvent;
-use Tonic\Behat\ParallelScenarioExtension\ParallelProcessRunner\ParallelProcessRunner;
 use Tonic\Behat\ParallelScenarioExtension\ProcessExtractor;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioInfoExtractor;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess;
+use Tonic\ParallelProcessRunner\Event\ProcessAfterStopEvent;
+use Tonic\ParallelProcessRunner\Event\ProcessBeforeStartEvent;
+use Tonic\ParallelProcessRunner\ParallelProcessRunner;
 
 /**
  * Class ParallelScenarioController.
