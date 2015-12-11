@@ -27,10 +27,18 @@ class ProcessOptionScalar extends ProcessOption
     }
 
     /**
+     * @return int|string
+     */
+    public function getOptionValue()
+    {
+        return $this->optionValue;
+    }
+
+    /**
      * @return string
      */
     public function __toString()
     {
-        return sprintf('%s %s', parent::__toString(), escapeshellarg($this->optionValue));
+        return sprintf('%s %s', parent::__toString(), escapeshellarg($this->getOptionValue()));
     }
 }

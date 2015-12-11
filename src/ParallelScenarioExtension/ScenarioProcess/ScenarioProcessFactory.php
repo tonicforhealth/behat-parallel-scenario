@@ -4,24 +4,21 @@ namespace Tonic\Behat\ParallelScenarioExtension\ScenarioProcess;
 
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Process\Process;
 use Tonic\Behat\ParallelScenarioExtension\Cli\ParallelScenarioController;
-use Tonic\Behat\ParallelScenarioExtension\Event\ParallelScenarioEventType;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioInfo\ScenarioInfo;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\Option\ProcessOption;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\Option\ProcessOptionArray;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\Option\ProcessOptionCollection;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\Option\ProcessOptionOut;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\Option\ProcessOptionScalar;
-use Tonic\ParallelProcessRunner\Event\ProcessEvent;
 
 /**
  * Class ProcessExtractor.
  *
  * @author kandelyabre <kandelyabre@gmail.com>
  */
-class ScenarioProcessFactory implements EventSubscriberInterface
+class ScenarioProcessFactory
 {
     /**
      * @var string
@@ -32,7 +29,6 @@ class ScenarioProcessFactory implements EventSubscriberInterface
      */
     private $skipOptions = [
         ParallelScenarioController::OPTION_PARALLEL_PROCESS,
-        'profile',
     ];
     /**
      * @var ProcessOptionCollection
@@ -40,66 +36,11 @@ class ScenarioProcessFactory implements EventSubscriberInterface
     private $optionCollection;
 
     /**
-     * @var array
-     */
-    private $profiles = [];
-
-    /**
-     * @var int
-     */
-    private $processIndex;
-
-    /**
      * ParallelScenarioCommandLineExtractor constructor.
      */
     public function __construct()
     {
         $this->behatBinaryPath = reset($_SERVER['argv']);
-        $this->resetProcessIndex();
-    }
-
-    /**
-     * @param array $profiles
-     */
-    public function setProfiles(array $profiles)
-    {
-        $this->profiles = $profiles;
-    }
-
-    public static function getSubscribedEvents()
-    {
-        return [
-            ParallelScenarioEventType::PROCESS_BEFORE_START => 'setProfileBeforeStart',
-            ParallelScenarioEventType::FEATURE_TESTED_BEFORE => 'resetProcessIndex',
-        ];
-    }
-
-    /**
-     * @return $this
-     */
-    public function resetProcessIndex()
-    {
-        $this->processIndex = -1;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getProcessIndex()
-    {
-        return ++$this->processIndex;
-    }
-
-    /**
-     * @param ProcessEvent $event
-     */
-    public function setProfileBeforeStart(ProcessEvent $event)
-    {
-        /** @var ScenarioProcess $process */
-        $process = $event->getProcess();
-        $process->setOption(new ProcessOptionScalar('profile', $this->getProfileByWorkerIndex($this->getProcessIndex())));
     }
 
     /**
@@ -116,12 +57,6 @@ class ScenarioProcessFactory implements EventSubscriberInterface
      */
     public function init(InputDefinition $inputDefinition, InputInterface $input)
     {
-        if (!$this->profiles && $profile = $input->getOption('profile')) {
-            $this->setProfiles([
-                $profile,
-            ]);
-        }
-
         $options = new ProcessOptionCollection();
 
         foreach ($inputDefinition->getOptions() as $optionName => $inputOption) {
@@ -175,25 +110,9 @@ class ScenarioProcessFactory implements EventSubscriberInterface
         $process = new ScenarioProcess($scenarioInfo, $commandLine);
 
         foreach ($options as $option) {
-            $process->setOption($option);
+            $process->setProcessOption($option);
         }
 
         return $process;
-    }
-
-    /**
-     * @param int $workerIndex
-     *
-     * @return string|null
-     */
-    private function getProfileByWorkerIndex($workerIndex)
-    {
-        $profile = null;
-        if ($environmentsCount = count($this->profiles)) {
-            $environmentIndex = $workerIndex % $environmentsCount;
-            $profile = $this->profiles[$environmentIndex];
-        }
-
-        return $profile;
     }
 }

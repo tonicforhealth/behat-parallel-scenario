@@ -49,9 +49,19 @@ class ScenarioProcess extends Process
     /**
      * @param ProcessOptionInterface $option
      */
-    public function setOption(ProcessOptionInterface $option)
+    public function setProcessOption(ProcessOptionInterface $option)
     {
         $this->optionCollection->set($option);
+    }
+
+    /**
+     * @param string $optionName
+     *
+     * @return null|ProcessOptionInterface
+     */
+    public function getProcessOption($optionName)
+    {
+        return $this->optionCollection->get($optionName);
     }
 
     /**

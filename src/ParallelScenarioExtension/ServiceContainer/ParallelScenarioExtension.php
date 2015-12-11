@@ -19,6 +19,7 @@ use Tonic\Behat\ParallelScenarioExtension\Listener\OutputPrinter;
 use Tonic\Behat\ParallelScenarioExtension\Listener\StopOnFailure;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioInfo\ScenarioInfoExtractor;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\ScenarioProcessFactory;
+use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\ScenarioProcessProfileBalance;
 use Tonic\ParallelProcessRunner\ParallelProcessRunner;
 
 /**
@@ -35,6 +36,7 @@ class ParallelScenarioExtension implements ExtensionInterface
 
     const PROCESS_RUNNER = 'parallel_scenario.process.runner';
     const PROCESS_FACTORY = 'parallel_scenario.process.factory';
+    const PROCESS_PROFILE_BALANCE = 'parallel_scenario.process.profile_balance';
     const OUTPUT_PRINTER = 'parallel_scenario.output.printer';
     const STOP_ON_FAILURE = 'parallel_scenario.stop_on_failure';
 
@@ -95,6 +97,7 @@ class ParallelScenarioExtension implements ExtensionInterface
         $this->loadScenarioInfoExtractor($containerBuilder);
         $this->loadFeatureExtractor($containerBuilder);
         $this->loadFeatureRunner($containerBuilder);
+        $this->loadProcessProfileBalance($containerBuilder, $config);
 
         $this->loadProcessRunner($containerBuilder);
         $this->loadProcessFactory($containerBuilder, $config);
@@ -110,21 +113,30 @@ class ParallelScenarioExtension implements ExtensionInterface
     protected function loadProcessFactory(ContainerBuilder $containerBuilder, array $config)
     {
         $skipOptions = $config[self::CONFIG_OPTIONS][self::CONFIG_SKIP];
-        $profiles = $config[self::CONFIG_PROFILES];
 
         $definition = new Definition(ScenarioProcessFactory::class);
         $definition->addMethodCall('addSkipOptions', [
             $skipOptions,
         ]);
-        $definition->addMethodCall('setProfiles', [
+
+        $containerBuilder->setDefinition(self::PROCESS_FACTORY, $definition);
+    }
+
+    /**
+     * @param ContainerBuilder $containerBuilder
+     * @param array            $config
+     */
+    protected function loadProcessProfileBalance(ContainerBuilder $containerBuilder, array $config)
+    {
+        $profiles = $config[self::CONFIG_PROFILES];
+        $definition = new Definition(ScenarioProcessProfileBalance::class, [
             $profiles,
         ]);
-
         $definition->addTag(EventDispatcherExtension::SUBSCRIBER_TAG, [
             'priority' => 800,
         ]);
 
-        $containerBuilder->setDefinition(self::PROCESS_FACTORY, $definition);
+        $containerBuilder->setDefinition(self::PROCESS_PROFILE_BALANCE, $definition);
     }
 
     /**
