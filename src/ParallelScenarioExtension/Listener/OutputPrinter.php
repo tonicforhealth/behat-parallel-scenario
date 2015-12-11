@@ -6,8 +6,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Tonic\Behat\ParallelScenarioExtension\Event\ParallelScenarioEventType;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\ScenarioProcess;
-use Tonic\ParallelProcessRunner\Event\ProcessAfterStopEvent;
-use Tonic\ParallelProcessRunner\Event\ProcessBeforeStartEvent;
+use Tonic\ParallelProcessRunner\Event\ProcessEvent;
 
 /**
  * Class OutputPrinter.
@@ -41,17 +40,17 @@ class OutputPrinter implements EventSubscriberInterface
     }
 
     /**
-     * @param ProcessBeforeStartEvent $event
+     * @param ProcessEvent $event
      */
-    public function beforeStart(ProcessBeforeStartEvent $event)
+    public function beforeStart(ProcessEvent $event)
     {
         $this->output->writeln(sprintf('START ::: %s', $event->getProcess()->getCommandLine()));
     }
 
     /**
-     * @param ProcessAfterStopEvent $event
+     * @param ProcessEvent $event
      */
-    public function afterStop(ProcessAfterStopEvent $event)
+    public function afterStop(ProcessEvent $event)
     {
         /** @var ScenarioProcess $process */
         $process = $event->getProcess();

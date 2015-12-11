@@ -14,7 +14,7 @@ use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\Option\ProcessOptionAr
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\Option\ProcessOptionCollection;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\Option\ProcessOptionOut;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\Option\ProcessOptionScalar;
-use Tonic\ParallelProcessRunner\Event\ProcessBeforeStartEvent;
+use Tonic\ParallelProcessRunner\Event\ProcessEvent;
 
 /**
  * Class ProcessExtractor.
@@ -93,9 +93,9 @@ class ScenarioProcessFactory implements EventSubscriberInterface
     }
 
     /**
-     * @param ProcessBeforeStartEvent $event
+     * @param ProcessEvent $event
      */
-    public function setProfileBeforeStart(ProcessBeforeStartEvent $event)
+    public function setProfileBeforeStart(ProcessEvent $event)
     {
         /** @var ScenarioProcess $process */
         $process = $event->getProcess();

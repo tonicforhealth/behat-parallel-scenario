@@ -5,7 +5,7 @@ namespace Tonic\Behat\ParallelScenarioExtension\Listener;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Tonic\Behat\ParallelScenarioExtension\Event\ParallelScenarioEventType;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\ScenarioProcess;
-use Tonic\ParallelProcessRunner\Event\ProcessAfterStopEvent;
+use Tonic\ParallelProcessRunner\Event\ProcessEvent;
 use Tonic\ParallelProcessRunner\ParallelProcessRunner;
 
 /**
@@ -41,9 +41,9 @@ class StopOnFailure implements EventSubscriberInterface
     }
 
     /**
-     * @param ProcessAfterStopEvent $event
+     * @param ProcessEvent $event
      */
-    public function stopOnFailure(ProcessAfterStopEvent $event)
+    public function stopOnFailure(ProcessEvent $event)
     {
         /** @var ScenarioProcess $process */
         $process = $event->getProcess();
