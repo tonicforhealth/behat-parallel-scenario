@@ -23,7 +23,7 @@ class OutputPrinter implements EventSubscriberInterface
     /**
      * @param OutputInterface $output
      */
-    public function init($output)
+    public function init(OutputInterface $output)
     {
         $this->output = $output;
     }
