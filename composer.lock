@@ -739,16 +739,16 @@
         },
         {
             "name": "tonicforhealth/parallel-process-runner",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tonicforhealth/parallel-process-runner.git",
-                "reference": "2f353d66c9b1d32350595454e09fd7e40f518210"
+                "reference": "2b312bf5b1df37f3c61410edec7f6060eaf175cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tonicforhealth/parallel-process-runner/zipball/2f353d66c9b1d32350595454e09fd7e40f518210",
-                "reference": "2f353d66c9b1d32350595454e09fd7e40f518210",
+                "url": "https://api.github.com/repos/tonicforhealth/parallel-process-runner/zipball/2b312bf5b1df37f3c61410edec7f6060eaf175cf",
+                "reference": "2b312bf5b1df37f3c61410edec7f6060eaf175cf",
                 "shasum": ""
             },
             "require": {
@@ -771,7 +771,7 @@
                     "email": "oleksii.storozhylov@tonicforhealth.com"
                 }
             ],
-            "time": "2015-12-10 11:15:31"
+            "time": "2015-12-10 15:46:48"
         }
     ],
     "packages-dev": [

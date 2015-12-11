@@ -1,6 +1,6 @@
 <?php
 
-namespace Tonic\Behat\ParallelScenarioExtension;
+namespace Tonic\Behat\ParallelScenarioExtension\ScenarioInfo;
 
 use Behat\Gherkin\Node\FeatureNode;
 use Behat\Gherkin\Node\OutlineNode;

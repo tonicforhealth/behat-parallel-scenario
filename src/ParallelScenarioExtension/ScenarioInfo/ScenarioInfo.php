@@ -1,6 +1,6 @@
 <?php
 
-namespace Tonic\Behat\ParallelScenarioExtension;
+namespace Tonic\Behat\ParallelScenarioExtension\ScenarioInfo;
 
 /**
  * Class ScenarioInfo.
