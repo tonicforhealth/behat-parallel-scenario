@@ -67,14 +67,6 @@ class ScenarioProcess extends Process
     /**
      * {@inheritdoc}
      */
-    protected function getCommandLineWithOptions()
-    {
-        return sprintf('%s %s', $this->commandLine, $this->optionCollection);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function setCommandLine($commandline)
     {
         $this->commandLine = $commandline;
@@ -117,8 +109,16 @@ class ScenarioProcess extends Process
         return parent::getCommandLine();
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    protected function getCommandLineWithOptions()
+    {
+        return sprintf('%s %s', $this->commandLine, $this->optionCollection);
+    }
+
     protected function updateCommandLine()
     {
-        return parent::setCommandLine($this->getCommandLineWithOptions());
+        parent::setCommandLine($this->getCommandLineWithOptions());
     }
 }

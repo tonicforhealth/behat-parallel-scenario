@@ -38,22 +38,7 @@ class FeatureExtractor
     }
 
     /**
-     * Finds specification iterators for all provided suites using locator.
-     *
-     * @param null|string $locator
-     *
-     * @return SpecificationIterator[]
-     */
-    private function findSuitesSpecifications($locator)
-    {
-        return $this->specificationFinder->findSuitesSpecifications(
-            $this->suiteRepository->getSuites(),
-            $locator
-        );
-    }
-
-    /**
-     * @param $locator
+     * @param string $locator
      *
      * @return FeatureNode[]
      */
@@ -70,5 +55,20 @@ class FeatureExtractor
         }
 
         return $features;
+    }
+
+    /**
+     * Finds specification iterators for all provided suites using locator.
+     *
+     * @param null|string $locator
+     *
+     * @return SpecificationIterator[]
+     */
+    private function findSuitesSpecifications($locator)
+    {
+        return $this->specificationFinder->findSuitesSpecifications(
+            $this->suiteRepository->getSuites(),
+            $locator
+        );
     }
 }

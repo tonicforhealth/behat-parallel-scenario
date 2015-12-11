@@ -72,11 +72,15 @@ class FeatureRunner
     }
 
     /**
-     * @param $maxParallelProcess
+     * @param int $maxParallelProcess
+     *
+     * @return $this
      */
     public function setMaxParallelProcess($maxParallelProcess)
     {
         $this->parallelProcessRunner->setMaxParallelProcess($maxParallelProcess);
+
+        return $this;
     }
 
     /**

@@ -14,13 +14,16 @@ class ProcessOptionCollection
      */
     private $options = [];
 
+    /**
+     * @param ProcessOptionInterface $option
+     */
     public function set(ProcessOptionInterface $option)
     {
         $this->options[$option->getOptionName()] = $option;
     }
 
     /**
-     * @param $optionName
+     * @param string $optionName
      *
      * @return null|ProcessOptionInterface
      */
