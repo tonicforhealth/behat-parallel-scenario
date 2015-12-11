@@ -4,7 +4,7 @@ namespace Tonic\Behat\ParallelScenarioExtension\Feature;
 
 use Behat\Gherkin\Node\FeatureNode;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Tonic\Behat\ParallelScenarioExtension\ParallelScenarioEventType;
+use Tonic\Behat\ParallelScenarioExtension\Event\ParallelScenarioEventType;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioInfo\ScenarioInfo;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioInfo\ScenarioInfoExtractor;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\ScenarioProcess;

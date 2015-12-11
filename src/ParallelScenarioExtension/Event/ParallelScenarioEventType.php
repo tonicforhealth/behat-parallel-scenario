@@ -1,6 +1,6 @@
 <?php
 
-namespace Tonic\Behat\ParallelScenarioExtension;
+namespace Tonic\Behat\ParallelScenarioExtension\Event;
 
 use Tonic\ParallelProcessRunner\Event\ProcessAfterStopEvent;
 use Tonic\ParallelProcessRunner\Event\ProcessBeforeStartEvent;

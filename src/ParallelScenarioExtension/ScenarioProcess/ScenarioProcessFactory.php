@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Process\Process;
 use Tonic\Behat\ParallelScenarioExtension\Cli\ParallelScenarioController;
-use Tonic\Behat\ParallelScenarioExtension\ParallelScenarioEventType;
+use Tonic\Behat\ParallelScenarioExtension\Event\ParallelScenarioEventType;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioInfo\ScenarioInfo;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\Option\ProcessOption;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\Option\ProcessOptionArray;

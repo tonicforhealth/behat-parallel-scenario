@@ -3,7 +3,7 @@
 namespace Tonic\Behat\ParallelScenarioExtension\Listener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Tonic\Behat\ParallelScenarioExtension\ParallelScenarioEventType;
+use Tonic\Behat\ParallelScenarioExtension\Event\ParallelScenarioEventType;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\ScenarioProcess;
 use Tonic\ParallelProcessRunner\Event\ProcessAfterStopEvent;
 use Tonic\ParallelProcessRunner\ParallelProcessRunner;
