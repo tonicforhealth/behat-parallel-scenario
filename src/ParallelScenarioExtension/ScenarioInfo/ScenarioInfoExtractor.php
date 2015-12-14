@@ -38,7 +38,6 @@ class ScenarioInfoExtractor
                 case $scenario instanceof OutlineNode:
                 case $scenario instanceof ScenarioInterface:
                     $scenarios[] = new ScenarioInfo($feature->getFile(), $scenario->getLine());
-                    break;
             }
 
             if ($this->isParallelWait($scenario) || !$this->isParallel($scenario)) {
