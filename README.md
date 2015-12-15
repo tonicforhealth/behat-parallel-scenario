@@ -47,6 +47,3 @@ default:
 $ bin/behat --parallel-process 2
 ```
 When parameter is absent or equal to 1 then test will be run in usual mode
-
-# Todo
-* tests
