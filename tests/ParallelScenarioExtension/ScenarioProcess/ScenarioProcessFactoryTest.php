@@ -109,6 +109,6 @@ class ScenarioProcessFactoryTest extends \PHPUnit_Framework_TestCase
         $scenarioInfo = new ScenarioInfo('file', 1);
         $process = $scenarioProcessFactory->make($scenarioInfo);
 
-        $this->assertEquals(sprintf('%s bin/behat \'file:1\' %s', PHP_BINARY, $expectedCommandLine), $process->getCommandLine());
+        $this->assertEquals(trim(sprintf('%s bin/behat \'file:1\' %s', PHP_BINARY, $expectedCommandLine)), $process->getCommandLine());
     }
 }
