@@ -36,11 +36,13 @@ class ScenarioProcessFactory
     private $optionCollection;
 
     /**
-     * ParallelScenarioCommandLineExtractor constructor.
+     * ScenarioProcessFactory constructor.
+     *
+     * @param string|null $behatBinaryPath
      */
-    public function __construct()
+    public function __construct($behatBinaryPath = null)
     {
-        $this->behatBinaryPath = reset($_SERVER['argv']);
+        $this->behatBinaryPath = is_null($behatBinaryPath) ? reset($_SERVER['argv']) : $behatBinaryPath;
     }
 
     /**
