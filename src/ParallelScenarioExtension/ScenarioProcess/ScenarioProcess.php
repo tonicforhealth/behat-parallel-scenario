@@ -92,16 +92,6 @@ class ScenarioProcess extends Process
     /**
      * {@inheritdoc}
      */
-    public function run($callback = null)
-    {
-        $this->updateCommandLine();
-
-        return parent::run($callback);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getCommandLine()
     {
         $this->updateCommandLine();
@@ -114,7 +104,10 @@ class ScenarioProcess extends Process
      */
     protected function getCommandLineWithOptions()
     {
-        return sprintf('%s %s', $this->commandLine, $this->optionCollection);
+        return implode(' ', array_filter([
+            $this->commandLine,
+            (string) $this->optionCollection,
+        ]));
     }
 
     protected function updateCommandLine()
