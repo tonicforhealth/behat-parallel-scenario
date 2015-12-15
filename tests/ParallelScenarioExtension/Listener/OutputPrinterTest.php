@@ -41,7 +41,6 @@ class OutputPrinterTest extends \PHPUnit_Framework_TestCase
 
         /** @var OutputInterface $output */
         /** @var ProcessEvent $event */
-
         $printer = new OutputPrinter();
         $printer->init($output);
 
@@ -75,6 +74,7 @@ class OutputPrinterTest extends \PHPUnit_Framework_TestCase
      * @param array $expected
      *
      * @see          OutputPrinter::afterStop
+     *
      * @dataProvider providerAfterStep
      */
     public function testAfterStop($error, array $expected)
@@ -98,7 +98,6 @@ class OutputPrinterTest extends \PHPUnit_Framework_TestCase
 
         /** @var OutputInterface $output */
         /** @var ProcessEvent $event */
-
         $printer = new OutputPrinter();
         $printer->init($output);
 

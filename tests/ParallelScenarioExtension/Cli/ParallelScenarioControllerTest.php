@@ -78,7 +78,8 @@ class ParallelScenarioControllerTest extends \PHPUnit_Framework_TestCase
      * @param array  $featureNodes
      * @param int    $expectedResult
      *
-     * @see ParallelScenarioController::execute
+     * @see          ParallelScenarioController::execute
+     *
      * @dataProvider providerExecuteMultiProcess
      */
     public function testExecuteMultiProcess($parallelProcess, $paths, array $featureNodes, $expectedResult)
@@ -148,7 +149,7 @@ class ParallelScenarioControllerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param mixed $parallelProcess
      *
-     * @see ParallelScenarioController::execute
+     * @see          ParallelScenarioController::execute
      * @dataProvider providerExecuteSingleProcess
      */
     public function testExecuteSingleProcess($parallelProcess)

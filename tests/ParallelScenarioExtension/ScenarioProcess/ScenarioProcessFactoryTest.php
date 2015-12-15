@@ -95,8 +95,8 @@ class ScenarioProcessFactoryTest extends \PHPUnit_Framework_TestCase
      * @param string          $expectedCommandLine
      * @param array           $skipOptions
      *
-     * @see ScenarioProcessFactory::init
-     * @see ScenarioProcessFactory::make
+     * @see          ScenarioProcessFactory::init
+     * @see          ScenarioProcessFactory::make
      *
      * @dataProvider providerMake
      */

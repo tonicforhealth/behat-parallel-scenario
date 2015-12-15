@@ -55,6 +55,7 @@ class StopOnFailure implements EventSubscriberInterface
 
     /**
      * @param int $code
+     *
      * @codeCoverageIgnore
      */
     protected function terminate($code)

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tonic\Behat\ParallelScenarioExtension\ScenarioProcess;
 
 use Tonic\Behat\ParallelScenarioExtension\ScenarioInfo\ScenarioInfo;

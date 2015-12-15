@@ -95,6 +95,7 @@ class FeatureRunnerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param array $scenarioGroups
+     *
      * @dataProvider providerRun
      */
     public function testRun(array $scenarioGroups)
