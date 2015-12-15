@@ -49,7 +49,16 @@ class StopOnFailure implements EventSubscriberInterface
         $process = $event->getProcess();
         if ($process->withError()) {
             $this->parallelProcessRunner->stop();
-            exit(1);
+            $this->terminate(1);
         }
+    }
+
+    /**
+     * @param int $code
+     * @codeCoverageIgnore
+     */
+    protected function terminate($code)
+    {
+        exit($code);
     }
 }
