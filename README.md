@@ -47,3 +47,5 @@ default:
 $ bin/behat --parallel-process 2
 ```
 When parameter is absent or equal to 1 then test will be run in usual mode
+
+[![Code Climate](https://codeclimate.com/github/tonicforhealth/behat-parallel-scenario/badges/gpa.svg)](https://codeclimate.com/github/tonicforhealth/behat-parallel-scenario)
