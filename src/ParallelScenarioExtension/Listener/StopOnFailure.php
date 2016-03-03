@@ -23,11 +23,11 @@ class StopOnFailure implements EventSubscriberInterface
     /**
      * StopOnFailureListener constructor.
      *
-     * @param ParallelProcessRunner $parallelProcessRunner
+     * @param ParallelProcessRunner $processRunner
      */
-    public function __construct(ParallelProcessRunner $parallelProcessRunner)
+    public function __construct(ParallelProcessRunner $processRunner)
     {
-        $this->parallelProcessRunner = $parallelProcessRunner;
+        $this->parallelProcessRunner = $processRunner;
     }
 
     /**

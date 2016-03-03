@@ -39,16 +39,16 @@ class FeatureRunner
      * FeatureRunner constructor.
      *
      * @param EventDispatcherInterface $eventDispatcher
-     * @param ScenarioInfoExtractor    $scenarioInfoExtractor
-     * @param ScenarioProcessFactory   $scenarioProcessFactory
-     * @param ParallelProcessRunner    $parallelProcessRunner
+     * @param ScenarioInfoExtractor    $infoExtractor
+     * @param ScenarioProcessFactory   $processFactory
+     * @param ParallelProcessRunner    $processRunner
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher, ScenarioInfoExtractor $scenarioInfoExtractor, ScenarioProcessFactory $scenarioProcessFactory, ParallelProcessRunner $parallelProcessRunner)
+    public function __construct(EventDispatcherInterface $eventDispatcher, ScenarioInfoExtractor $infoExtractor, ScenarioProcessFactory $processFactory, ParallelProcessRunner $processRunner)
     {
         $this->eventDispatcher = $eventDispatcher;
-        $this->scenarioInfoExtractor = $scenarioInfoExtractor;
-        $this->scenarioProcessFactory = $scenarioProcessFactory;
-        $this->parallelProcessRunner = $parallelProcessRunner;
+        $this->scenarioInfoExtractor = $infoExtractor;
+        $this->scenarioProcessFactory = $processFactory;
+        $this->parallelProcessRunner = $processRunner;
     }
 
     /**

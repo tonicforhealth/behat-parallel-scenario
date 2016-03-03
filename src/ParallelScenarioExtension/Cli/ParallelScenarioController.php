@@ -33,7 +33,7 @@ class ParallelScenarioController implements Controller
     /**
      * @var ScenarioProcessFactory
      */
-    private $scenarioProcessFactory;
+    private $processFactory;
     /**
      * @var OutputPrinter
      */
@@ -46,16 +46,16 @@ class ParallelScenarioController implements Controller
     /**
      * ParallelScenarioController constructor.
      *
-     * @param FeatureRunner          $featureParallelRunner
+     * @param FeatureRunner          $featureRunner
      * @param FeatureExtractor       $featureExtractor
-     * @param ScenarioProcessFactory $scenarioProcessFactory
+     * @param ScenarioProcessFactory $processFactory
      * @param OutputPrinter          $outputPrinter
      */
-    public function __construct(FeatureRunner $featureParallelRunner, FeatureExtractor $featureExtractor, ScenarioProcessFactory $scenarioProcessFactory, OutputPrinter $outputPrinter)
+    public function __construct(FeatureRunner $featureRunner, FeatureExtractor $featureExtractor, ScenarioProcessFactory $processFactory, OutputPrinter $outputPrinter)
     {
-        $this->featureRunner = $featureParallelRunner;
+        $this->featureRunner = $featureRunner;
         $this->featureExtractor = $featureExtractor;
-        $this->scenarioProcessFactory = $scenarioProcessFactory;
+        $this->processFactory = $processFactory;
         $this->outputPrinter = $outputPrinter;
     }
 
@@ -80,7 +80,7 @@ class ParallelScenarioController implements Controller
 
         if ($maxProcessesAmount > 1) {
             $this->outputPrinter->init($output);
-            $this->scenarioProcessFactory->init($this->inputDefinition, $input);
+            $this->processFactory->init($this->inputDefinition, $input);
             $this->featureRunner->setMaxParallelProcess($maxProcessesAmount);
 
             $result = 0;
