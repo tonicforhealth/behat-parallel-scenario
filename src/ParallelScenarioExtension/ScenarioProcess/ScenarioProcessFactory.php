@@ -23,52 +23,40 @@ class ScenarioProcessFactory
     /**
      * @var string
      */
-    private $behatBinaryPath;
+    protected $behatBinaryPath;
     /**
      * @var array
      */
-    private $skipOptions = [
+    protected $skipOptions = [
         ParallelScenarioController::OPTION_PARALLEL_PROCESS,
     ];
     /**
      * @var ProcessOptionCollection
      */
-    private $optionCollection;
+    protected $optionCollection;
 
-    /**
-     * ScenarioProcessFactory constructor.
-     *
-     * @param string|null $behatBinaryPath
-     */
-    public function __construct($behatBinaryPath = null)
+    public function __construct(string $behatBinaryPath = null)
     {
-        $this->behatBinaryPath = is_null($behatBinaryPath) ? reset($_SERVER['argv']) : $behatBinaryPath;
+        $this->behatBinaryPath = null === $behatBinaryPath ? reset($_SERVER['argv']) : $behatBinaryPath;
     }
 
-    /**
-     * @param array $options
-     */
-    public function addSkipOptions(array $options)
+    public function addSkipOptions(array $options): void
     {
         $this->skipOptions = array_unique(array_merge($this->skipOptions, $options));
     }
 
-    /**
-     * @param InputDefinition $inputDefinition
-     * @param InputInterface  $input
-     */
-    public function init(InputDefinition $inputDefinition, InputInterface $input)
+    public function init(InputDefinition $inputDefinition, InputInterface $input): void
     {
         $options = new ProcessOptionCollection();
 
         foreach ($inputDefinition->getOptions() as $optionName => $inputOption) {
             $optionValue = $input->getOption($optionName);
-            if ($inputOption->getDefault() != $optionValue) {
+            if ($inputOption->getDefault() !== $optionValue) {
                 switch (true) {
-                    case in_array($optionName, $this->skipOptions):
+                    case in_array($optionName, $this->skipOptions, true):
                         $option = null;
                         break;
-                    case $inputOption->isArray() && $optionName == 'out':
+                    case $inputOption->isArray() && 'out' === $optionName:
                         $option = new ProcessOptionOut($optionName, $optionValue);
                         break;
                     case $inputOption->isArray():
@@ -92,8 +80,6 @@ class ScenarioProcessFactory
     }
 
     /**
-     * @param ScenarioInfo $scenarioInfo
-     *
      * @return Process
      */
     public function make(ScenarioInfo $scenarioInfo)

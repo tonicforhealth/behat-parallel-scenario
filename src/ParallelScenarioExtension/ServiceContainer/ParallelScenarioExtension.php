@@ -29,20 +29,20 @@ use Tonic\ParallelProcessRunner\ParallelProcessRunner;
  */
 class ParallelScenarioExtension implements ExtensionInterface
 {
-    const FEATURE_EXTRACTOR = 'parallel_scenario.feature.extractor';
-    const FEATURE_RUNNER = 'parallel_scenario.feature.runner';
+    public const FEATURE_EXTRACTOR = 'parallel_scenario.feature.extractor';
+    public const FEATURE_RUNNER = 'parallel_scenario.feature.runner';
 
-    const SCENARIO_INFO_EXTRACTOR = 'parallel_scenario.scenario.info.extractor';
+    public const SCENARIO_INFO_EXTRACTOR = 'parallel_scenario.scenario.info.extractor';
 
-    const PROCESS_RUNNER = 'parallel_scenario.process.runner';
-    const PROCESS_FACTORY = 'parallel_scenario.process.factory';
-    const PROCESS_PROFILE_BALANCE = 'parallel_scenario.process.profile_balance';
-    const OUTPUT_PRINTER = 'parallel_scenario.output.printer';
-    const STOP_ON_FAILURE = 'parallel_scenario.stop_on_failure';
+    public const PROCESS_RUNNER = 'parallel_scenario.process.runner';
+    public const PROCESS_FACTORY = 'parallel_scenario.process.factory';
+    public const PROCESS_PROFILE_BALANCE = 'parallel_scenario.process.profile_balance';
+    public const OUTPUT_PRINTER = 'parallel_scenario.output.printer';
+    public const STOP_ON_FAILURE = 'parallel_scenario.stop_on_failure';
 
-    const CONFIG_OPTIONS = 'options';
-    const CONFIG_SKIP = 'skip';
-    const CONFIG_PROFILES = 'profiles';
+    public const CONFIG_OPTIONS = 'options';
+    public const CONFIG_SKIP = 'skip';
+    public const CONFIG_PROFILES = 'profiles';
 
     /**
      * {@inheritdoc}
@@ -106,10 +106,6 @@ class ParallelScenarioExtension implements ExtensionInterface
         $this->loadOutputPrinter($containerBuilder);
     }
 
-    /**
-     * @param ContainerBuilder $containerBuilder
-     * @param array            $config
-     */
     protected function loadProcessFactory(ContainerBuilder $containerBuilder, array $config)
     {
         $skipOptions = $config[self::CONFIG_OPTIONS][self::CONFIG_SKIP];
@@ -122,10 +118,6 @@ class ParallelScenarioExtension implements ExtensionInterface
         $containerBuilder->setDefinition(self::PROCESS_FACTORY, $definition);
     }
 
-    /**
-     * @param ContainerBuilder $containerBuilder
-     * @param array            $config
-     */
     protected function loadProcessProfileBalance(ContainerBuilder $containerBuilder, array $config)
     {
         $profiles = $config[self::CONFIG_PROFILES];
@@ -139,9 +131,6 @@ class ParallelScenarioExtension implements ExtensionInterface
         $containerBuilder->setDefinition(self::PROCESS_PROFILE_BALANCE, $definition);
     }
 
-    /**
-     * @param ContainerBuilder $containerBuilder
-     */
     protected function loadController(ContainerBuilder $containerBuilder)
     {
         $definition = new Definition(ParallelScenarioController::class, [
@@ -158,9 +147,6 @@ class ParallelScenarioExtension implements ExtensionInterface
         $containerBuilder->setDefinition(CliExtension::CONTROLLER_TAG.'.parallel-scenario', $definition);
     }
 
-    /**
-     * @param ContainerBuilder $containerBuilder
-     */
     protected function loadOutputPrinter(ContainerBuilder $containerBuilder)
     {
         $definition = new Definition(OutputPrinter::class);
@@ -171,9 +157,6 @@ class ParallelScenarioExtension implements ExtensionInterface
         $containerBuilder->setDefinition(self::OUTPUT_PRINTER, $definition);
     }
 
-    /**
-     * @param ContainerBuilder $containerBuilder
-     */
     protected function loadProcessRunner(ContainerBuilder $containerBuilder)
     {
         $definition = new Definition(ParallelProcessRunner::class, [
@@ -183,9 +166,6 @@ class ParallelScenarioExtension implements ExtensionInterface
         $containerBuilder->setDefinition(self::PROCESS_RUNNER, $definition);
     }
 
-    /**
-     * @param ContainerBuilder $containerBuilder
-     */
     protected function loadStopOnFailure(ContainerBuilder $containerBuilder)
     {
         $definition = new Definition(StopOnFailure::class, [
@@ -196,9 +176,6 @@ class ParallelScenarioExtension implements ExtensionInterface
         $containerBuilder->setDefinition(self::STOP_ON_FAILURE, $definition);
     }
 
-    /**
-     * @param ContainerBuilder $containerBuilder
-     */
     protected function loadFeatureExtractor(ContainerBuilder $containerBuilder)
     {
         $definition = new Definition(FeatureExtractor::class, [
@@ -209,9 +186,6 @@ class ParallelScenarioExtension implements ExtensionInterface
         $containerBuilder->setDefinition(self::FEATURE_EXTRACTOR, $definition);
     }
 
-    /**
-     * @param ContainerBuilder $containerBuilder
-     */
     protected function loadFeatureRunner(ContainerBuilder $containerBuilder)
     {
         $definition = new Definition(FeatureRunner::class, [
@@ -224,9 +198,6 @@ class ParallelScenarioExtension implements ExtensionInterface
         $containerBuilder->setDefinition(self::FEATURE_RUNNER, $definition);
     }
 
-    /**
-     * @param ContainerBuilder $containerBuilder
-     */
     protected function loadScenarioInfoExtractor(ContainerBuilder $containerBuilder)
     {
         $definition = new Definition(ScenarioInfoExtractor::class);

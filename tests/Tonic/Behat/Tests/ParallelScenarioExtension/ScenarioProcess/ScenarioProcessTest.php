@@ -1,23 +1,23 @@
 <?php
 
-namespace Tonic\Behat\ParallelScenarioExtension\ScenarioProcess;
+namespace Tonic\Behat\Tests\ParallelScenarioExtension\ScenarioProcess;
 
+use PHPUnit\Framework\TestCase;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioInfo\ScenarioInfo;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\Option\ProcessOptionInterface;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\Option\ProcessOptionOut;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\Option\ProcessOptionScalar;
+use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\ScenarioProcess;
 
 /**
  * Class ScenarioProcessTest.
+ * @coversDefaultClass \Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\ScenarioProcess
  *
  * @author kandelyabre <kandelyabre@gmail.com>
  */
-class ScenarioProcessTest extends \PHPUnit_Framework_TestCase
+class ScenarioProcessTest extends TestCase
 {
-    /**
-     * @return array
-     */
-    public function providerSetGetProcessOption()
+    public function providerSetGetProcessOption(): array
     {
         return [
             [
@@ -32,36 +32,32 @@ class ScenarioProcessTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string                      $name
-     * @param ProcessOptionInterface|null $option
-     *
      * @dataProvider providerSetGetProcessOption
+     * @covers ::getProcessOption
      */
-    public function testSetGetProcessOption($name, ProcessOptionInterface $option = null)
+    public function testSetGetProcessOption(string $name, ProcessOptionInterface $option = null): void
     {
         $process = new ScenarioProcess(new ScenarioInfo('file', 0), '');
         if ($option) {
             $process->setProcessOption($option);
         }
 
-        $this->assertEquals($option, $process->getProcessOption($name));
+        self::assertEquals($option, $process->getProcessOption($name));
     }
 
     /**
-     * @param string $commandLine
+     * @covers ::getCommandLine
+     * @covers ::setCommandLine
      */
-    public function testSetCommandLine($commandLine = 'test')
+    public function testSetCommandLine(string $commandLine = 'test'): void
     {
         $process = new ScenarioProcess(new ScenarioInfo('file', 0), '');
         $process->setCommandLine($commandLine);
 
-        $this->assertEquals($commandLine, $process->getCommandLine());
+        self::assertEquals($commandLine, $process->getCommandLine());
     }
 
-    /**
-     * @return array
-     */
-    public function providerWithError()
+    public function providerWithError(): array
     {
         return [
             [true],
@@ -70,43 +66,44 @@ class ScenarioProcessTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param bool $withError
-     *
      * @dataProvider providerWithError
+     * @covers ::withError
      */
-    public function testWithError($withError)
+    public function testWithError(bool $withError): void
     {
-        $process = $this->getMock(ScenarioProcess::class, ['getExitCode'], [], '', false);
-        $process->expects($this->once())->method('getExitCode')->willReturn($withError);
-        /** @var ScenarioProcess $process */
-        $this->assertEquals($withError, $process->withError());
+        $process = $this
+            ->getMockBuilder(ScenarioProcess::class)
+            ->setConstructorArgs([$this->createMock(ScenarioInfo::class), ''])
+            ->onlyMethods(['getExitCode'])
+            ->getMock();
+
+        $process->method('getExitCode')->willReturn($withError);
+
+        self::assertEquals($withError, $process->withError());
     }
 
     /**
-     * @param string $optionName
-     * @param string $optionValue
+     * @covers ::setProcessOption
+     * @covers ::getCommandLine
      */
-    public function testCommon($optionName = 'option', $optionValue = 'test')
+    public function testCommon(string $optionName = 'option', string $optionValue = 'test'): void
     {
         $process = new ScenarioProcess(new ScenarioInfo('file', 0), 'cmd');
         $process->setProcessOption(new ProcessOptionScalar($optionName, $optionValue));
 
-        $this->assertEquals(
+        self::assertEquals(
             sprintf('cmd --%s %s', $optionName, escapeshellarg($optionValue)),
             $process->getCommandLine()
         );
 
         $process->setProcessOption(new ProcessOptionScalar($optionName, $optionValue.$optionValue));
-        $this->assertEquals(
+        self::assertEquals(
             sprintf('cmd --%s %s', $optionName, escapeshellarg($optionValue.$optionValue)),
             $process->getCommandLine()
         );
     }
 
-    /**
-     * @return array
-     */
-    public function providerUpdateCommandLineCall()
+    public function providerUpdateCommandLineCall(): array
     {
         return [
             ['run'],
@@ -116,17 +113,14 @@ class ScenarioProcessTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string $method
-     *
      * @dataProvider providerUpdateCommandLineCall
+     * @covers ::<public>
      */
-    public function testUpdateCommandLineCall($method)
+    public function testUpdateCommandLineCall(string $method): void
     {
-        $command = sprintf('%s', PHP_BINARY);
-
-        $process = $this->getMock(ScenarioProcess::class, ['updateCommandLine'], [new ScenarioInfo('file', 0), $command]);
-        $process->expects($this->once())->method('updateCommandLine');
-        /** @var ScenarioProcess $process */
+        $process = $this->createMock(ScenarioProcess::class);
+        $process->expects(self::once())->method('updateCommandLine');
+        /* @var ScenarioProcess $process */
         $process->$method();
     }
 }

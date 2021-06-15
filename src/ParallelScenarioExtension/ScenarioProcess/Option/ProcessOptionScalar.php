@@ -12,7 +12,7 @@ class ProcessOptionScalar extends ProcessOption
     /**
      * @var string|int
      */
-    private $optionValue;
+    protected $optionValue;
 
     /**
      * ProcessOptionString constructor.

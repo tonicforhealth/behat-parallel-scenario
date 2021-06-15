@@ -12,7 +12,7 @@ class ProcessOptionOut extends ProcessOptionArray
     /**
      * @var string
      */
-    private $outSuffix;
+    protected $outSuffix;
 
     /**
      * @param string $outSuffix
@@ -45,7 +45,7 @@ class ProcessOptionOut extends ProcessOptionArray
      *
      * @see \Behat\Testwork\Output\Cli\OutputController::isStandardOutput
      *
-     * @return Boolean
+     * @return bool
      */
     private function isStandardOutput($outputId)
     {

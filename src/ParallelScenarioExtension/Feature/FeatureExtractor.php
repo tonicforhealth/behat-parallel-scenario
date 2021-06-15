@@ -18,18 +18,15 @@ class FeatureExtractor
     /**
      * @var SuiteRepository
      */
-    private $suiteRepository;
+    protected $suiteRepository;
 
     /**
      * @var SpecificationFinder
      */
-    private $specificationFinder;
+    protected $specificationFinder;
 
     /**
      * FeatureExtractor constructor.
-     *
-     * @param SuiteRepository     $suiteRepository
-     * @param SpecificationFinder $specificationFinder
      */
     public function __construct(SuiteRepository $suiteRepository, SpecificationFinder $specificationFinder)
     {
@@ -38,11 +35,9 @@ class FeatureExtractor
     }
 
     /**
-     * @param string $locator
-     *
      * @return FeatureNode[]
      */
-    public function extract($locator)
+    public function extract(string $locator): array
     {
         $features = [];
 
@@ -60,11 +55,9 @@ class FeatureExtractor
     /**
      * Finds specification iterators for all provided suites using locator.
      *
-     * @param null|string $locator
-     *
      * @return SpecificationIterator[]
      */
-    private function findSuitesSpecifications($locator)
+    private function findSuitesSpecifications(?string $locator): array
     {
         return $this->specificationFinder->findSuitesSpecifications(
             $this->suiteRepository->getSuites(),

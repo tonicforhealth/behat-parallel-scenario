@@ -13,16 +13,11 @@ use Behat\Gherkin\Node\ScenarioInterface;
  */
 class ScenarioInfoExtractor
 {
-    const TAG_PARALLEL_SCENARIO = 'parallel-scenario';
-    const TAG_PARALLEL_WAIT = 'parallel-wait';
-    const TAG_PARALLEL_EXAMPLES = 'parallel-examples';
+    public const TAG_PARALLEL_SCENARIO = 'parallel-scenario';
+    public const TAG_PARALLEL_WAIT = 'parallel-wait';
+    public const TAG_PARALLEL_EXAMPLES = 'parallel-examples';
 
-    /**
-     * @param FeatureNode $feature
-     *
-     * @return array
-     */
-    public function extract(FeatureNode $feature)
+    public function extract(FeatureNode $feature): array
     {
         $allScenarios = [];
 
@@ -44,9 +39,9 @@ class ScenarioInfoExtractor
                 $allScenarios[] = [];
             }
 
-            $lastIndex = empty($allScenarios) ? 0 : count($allScenarios) - 1;
+            $lastIndex = empty($allScenarios) ? 0 : \count($allScenarios) - 1;
 
-            if (!array_key_exists($lastIndex, $allScenarios)) {
+            if (!\array_key_exists($lastIndex, $allScenarios)) {
                 $allScenarios[$lastIndex] = [];
             }
 
@@ -60,33 +55,18 @@ class ScenarioInfoExtractor
         return array_values(array_filter($allScenarios));
     }
 
-    /**
-     * @param ScenarioInterface $scenario
-     *
-     * @return bool
-     */
-    private function isParallel(ScenarioInterface $scenario)
+    private function isParallel(ScenarioInterface $scenario): bool
     {
-        return in_array(self::TAG_PARALLEL_SCENARIO, $scenario->getTags()) || $this->isParallelExamples($scenario);
+        return \in_array(self::TAG_PARALLEL_SCENARIO, $scenario->getTags()) || $this->isParallelExamples($scenario);
     }
 
-    /**
-     * @param ScenarioInterface $scenario
-     *
-     * @return bool
-     */
-    private function isParallelWait(ScenarioInterface $scenario)
+    private function isParallelWait(ScenarioInterface $scenario): bool
     {
-        return in_array(self::TAG_PARALLEL_WAIT, $scenario->getTags());
+        return \in_array(self::TAG_PARALLEL_WAIT, $scenario->getTags());
     }
 
-    /**
-     * @param ScenarioInterface $scenario
-     *
-     * @return bool
-     */
-    private function isParallelExamples(ScenarioInterface $scenario)
+    private function isParallelExamples(ScenarioInterface $scenario): bool
     {
-        return $scenario instanceof OutlineNode && in_array(self::TAG_PARALLEL_EXAMPLES, $scenario->getTags());
+        return $scenario instanceof OutlineNode && \in_array(self::TAG_PARALLEL_EXAMPLES, $scenario->getTags());
     }
 }

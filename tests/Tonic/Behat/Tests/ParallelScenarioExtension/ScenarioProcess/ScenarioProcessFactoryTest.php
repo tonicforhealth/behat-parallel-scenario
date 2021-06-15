@@ -1,24 +1,25 @@
 <?php
 
-namespace Tonic\Behat\ParallelScenarioExtension\ScenarioProcess;
+namespace Tonic\Behat\Tests\ParallelScenarioExtension\ScenarioProcess;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioInfo\ScenarioInfo;
+use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\ScenarioProcessFactory;
 
 /**
  * Class ScenarioProcessFactoryTest.
  *
+ * @coversDefaultClass \Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\ScenarioProcessFactory
+ *
  * @author kandelyabre <kandelyabre@gmail.com>
  */
-class ScenarioProcessFactoryTest extends \PHPUnit_Framework_TestCase
+class ScenarioProcessFactoryTest extends TestCase
 {
-    /**
-     * @return array
-     */
-    public function providerMake()
+    public function providerMake(): array
     {
         $inputDefinition = new InputDefinition();
         $inputDefinition->addOption(new InputOption('option_optional_default', null, InputOption::VALUE_OPTIONAL, '', 'default'));
@@ -90,17 +91,12 @@ class ScenarioProcessFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param InputDefinition $inputDefinition
-     * @param InputInterface  $input
-     * @param string          $expectedCommandLine
-     * @param array           $skipOptions
-     *
-     * @see          ScenarioProcessFactory::init
-     * @see          ScenarioProcessFactory::make
+     * @covers       ::init
+     * @covers      ::make
      *
      * @dataProvider providerMake
      */
-    public function testMake(InputDefinition $inputDefinition, InputInterface $input, $expectedCommandLine = '', array $skipOptions = [])
+    public function testMake(InputDefinition $inputDefinition, InputInterface $input, string $expectedCommandLine = '', array $skipOptions = []): void
     {
         $scenarioProcessFactory = new ScenarioProcessFactory('bin/behat');
         $scenarioProcessFactory->addSkipOptions($skipOptions);
@@ -109,6 +105,6 @@ class ScenarioProcessFactoryTest extends \PHPUnit_Framework_TestCase
         $scenarioInfo = new ScenarioInfo('file', 1);
         $process = $scenarioProcessFactory->make($scenarioInfo);
 
-        $this->assertEquals(trim(sprintf('%s bin/behat \'file:1\' %s', PHP_BINARY, $expectedCommandLine)), $process->getCommandLine());
+        self::assertEquals(trim(sprintf('%s bin/behat \'file:1\' %s', PHP_BINARY, $expectedCommandLine)), $process->getCommandLine());
     }
 }

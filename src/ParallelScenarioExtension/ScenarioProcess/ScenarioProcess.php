@@ -17,39 +17,25 @@ class ScenarioProcess extends Process
     /**
      * @var ScenarioInfo
      */
-    private $scenarioInfo;
+    protected $scenarioInfo;
     /**
      * @var string
      */
-    private $commandLine;
+    protected $commandLine;
     /**
      * @var ProcessOptionCollection
      */
-    private $optionCollection;
+    protected $optionCollection;
 
-    /**
-     * ScenarioProcess constructor.
-     *
-     * @param ScenarioInfo $scenarioInfo
-     * @param null|string  $commandline
-     * @param null         $cwd
-     * @param array|null   $env
-     * @param null         $input
-     * @param int          $timeout
-     * @param array        $options
-     */
-    public function __construct(ScenarioInfo $scenarioInfo, $commandline, $cwd = null, array $env = null, $input = null, $timeout = 0, array $options = array())
+    public function __construct(ScenarioInfo $scenarioInfo, $commandline, $cwd = null, array $env = null, $input = null, int $timeout = 0)
     {
         $this->scenarioInfo = $scenarioInfo;
         $this->commandLine = $commandline;
         $this->optionCollection = new ProcessOptionCollection();
-        parent::__construct($this->getCommandLineWithOptions(), $cwd, $env, $input, $timeout, $options);
+        parent::__construct($this->getCommandLineWithOptions(), $cwd, $env, $input, $timeout);
     }
 
-    /**
-     * @param ProcessOptionInterface $option
-     */
-    public function setProcessOption(ProcessOptionInterface $option)
+    public function setProcessOption(ProcessOptionInterface $option): void
     {
         $this->optionCollection->set($option);
     }
@@ -57,9 +43,9 @@ class ScenarioProcess extends Process
     /**
      * @param string $optionName
      *
-     * @return null|ProcessOptionInterface
+     * @return ProcessOptionInterface|null
      */
-    public function getProcessOption($optionName)
+    public function getProcessOption($optionName): ?ProcessOptionInterface
     {
         return $this->optionCollection->get($optionName);
     }
@@ -75,7 +61,7 @@ class ScenarioProcess extends Process
     /**
      * @return bool
      */
-    public function withError()
+    public function withError(): bool
     {
         return (bool) $this->getExitCode();
     }
@@ -83,7 +69,7 @@ class ScenarioProcess extends Process
     /**
      * {@inheritdoc}
      */
-    public function start(callable $callback = null)
+    public function start(callable $callback = null, array $env = [])
     {
         $this->updateCommandLine();
         parent::start($callback);
@@ -102,7 +88,7 @@ class ScenarioProcess extends Process
     /**
      * {@inheritdoc}
      */
-    protected function getCommandLineWithOptions()
+    protected function getCommandLineWithOptions(): string
     {
         return implode(' ', array_filter([
             $this->commandLine,
@@ -110,8 +96,10 @@ class ScenarioProcess extends Process
         ]));
     }
 
-    protected function updateCommandLine()
+    protected function updateCommandLine(): void
     {
-        parent::setCommandLine($this->getCommandLineWithOptions());
+        $this->run(function () {
+            $this->getCommandLineWithOptions();
+        });
     }
 }

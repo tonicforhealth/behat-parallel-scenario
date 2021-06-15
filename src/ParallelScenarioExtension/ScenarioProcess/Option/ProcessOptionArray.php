@@ -18,7 +18,6 @@ class ProcessOptionArray extends ProcessOption
      * ProcessOptionArray constructor.
      *
      * @param string $optionName
-     * @param array  $optionValues
      */
     public function __construct($optionName, array $optionValues)
     {

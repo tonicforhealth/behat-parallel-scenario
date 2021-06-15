@@ -20,36 +20,31 @@ use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\ScenarioProcessFactory
  */
 class ParallelScenarioController implements Controller
 {
-    const OPTION_PARALLEL_PROCESS = 'parallel-process';
+    public const OPTION_PARALLEL_PROCESS = 'parallel-process';
 
     /**
      * @var FeatureRunner
      */
-    private $featureRunner;
+    protected $featureRunner;
     /**
      * @var FeatureExtractor
      */
-    private $featureExtractor;
+    protected $featureExtractor;
     /**
      * @var ScenarioProcessFactory
      */
-    private $processFactory;
+    protected $processFactory;
     /**
      * @var OutputPrinter
      */
-    private $outputPrinter;
+    protected $outputPrinter;
     /**
      * @var InputDefinition
      */
-    private $inputDefinition;
+    protected $inputDefinition;
 
     /**
      * ParallelScenarioController constructor.
-     *
-     * @param FeatureRunner          $featureRunner
-     * @param FeatureExtractor       $featureExtractor
-     * @param ScenarioProcessFactory $processFactory
-     * @param OutputPrinter          $outputPrinter
      */
     public function __construct(FeatureRunner $featureRunner, FeatureExtractor $featureExtractor, ScenarioProcessFactory $processFactory, OutputPrinter $outputPrinter)
     {
