@@ -98,8 +98,7 @@ class ScenarioProcess extends Process
 
     protected function updateCommandLine(): void
     {
-        $this->run(function () {
-            $this->getCommandLineWithOptions();
-        });
+        // TODO remove dependency
+        parent::setCommandLine($this->getCommandLineWithOptions());
     }
 }
