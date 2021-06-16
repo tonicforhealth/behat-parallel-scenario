@@ -118,7 +118,12 @@ class ScenarioProcessTest extends TestCase
      */
     public function testUpdateCommandLineCall(string $method): void
     {
-        $process = $this->createMock(ScenarioProcess::class);
+        $process = $this
+            ->getMockBuilder(ScenarioProcess::class)
+            ->setConstructorArgs([new ScenarioInfo('file', 0), 'cmd'])
+            ->onlyMethods(['updateCommandLine'])
+            ->getMock();
+
         $process->expects(self::once())->method('updateCommandLine');
         /* @var ScenarioProcess $process */
         $process->$method();
