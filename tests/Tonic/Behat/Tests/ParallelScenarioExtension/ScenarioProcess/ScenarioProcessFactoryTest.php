@@ -91,7 +91,7 @@ class ScenarioProcessFactoryTest extends TestCase
     }
 
     /**
-     * @covers       ::init
+     * @covers      ::init
      * @covers      ::make
      *
      * @dataProvider providerMake
@@ -99,10 +99,11 @@ class ScenarioProcessFactoryTest extends TestCase
     public function testMake(InputDefinition $inputDefinition, InputInterface $input, string $expectedCommandLine = '', array $skipOptions = []): void
     {
         $scenarioProcessFactory = new ScenarioProcessFactory('bin/behat');
+        $scenarioInfo = new ScenarioInfo('file', 1);
+
         $scenarioProcessFactory->addSkipOptions($skipOptions);
         $scenarioProcessFactory->init($inputDefinition, $input);
 
-        $scenarioInfo = new ScenarioInfo('file', 1);
         $process = $scenarioProcessFactory->make($scenarioInfo);
 
         self::assertEquals(trim(sprintf('%s bin/behat \'file:1\' %s', PHP_BINARY, $expectedCommandLine)), $process->getCommandLine());

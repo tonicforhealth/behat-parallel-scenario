@@ -2,8 +2,10 @@
 
 namespace Tonic\Behat\Tests\ParallelScenarioExtension\ScenarioProcess;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Tonic\Behat\ParallelScenarioExtension\Event\ParallelScenarioEventType;
+use Tonic\Behat\ParallelScenarioExtension\ScenarioInfo\ScenarioInfo;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\Option\ProcessOptionScalar;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\ScenarioProcess;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\ScenarioProcessProfileBalance;
@@ -81,13 +83,16 @@ class ScenarioProcessProfileBalanceTest extends TestCase
     }
 
     /**
-     * @return ProcessEvent[]
+     * @return ProcessEvent[]|MockObject[]
      */
     private function getEvents(int $amount): array
     {
         $events = [];
         while ($amount--) {
+            $process = $this->createMock(ScenarioProcess::class);
             $event = $this->createMock(ProcessEvent::class);
+
+            $event->method('getProcess')->willReturn($process);
 
             $events[] = $event;
         }

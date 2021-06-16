@@ -1,5 +1,5 @@
 {
-    "name": "tonicforhealth/behat-parallel-scenario",
+    "name": "kaspervrind/behat-parallel-scenario",
     "description": "Behat parallel scenario",
     "keywords": ["bdd", "behat", "parallel", "process", "testing"],
     "authors": [
