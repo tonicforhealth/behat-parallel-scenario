@@ -1,25 +1,24 @@
 <?php
 
-namespace Tonic\Behat\ParallelScenarioExtension\ScenarioInfo;
+namespace Tonic\Behat\Tests\ParallelScenarioExtension\ScenarioInfo;
 
 use Behat\Gherkin\Keywords\ArrayKeywords;
 use Behat\Gherkin\Lexer;
 use Behat\Gherkin\Node\FeatureNode;
 use Behat\Gherkin\Parser;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use Tonic\Behat\ParallelScenarioExtension\ScenarioInfo\ScenarioInfo;
+use Tonic\Behat\ParallelScenarioExtension\ScenarioInfo\ScenarioInfoExtractor;
 
 /**
- * Class ScenarioInfoExtractorTest.
- *
- * @author kandelyabre <kandelyabre@gmail.com>
+ * @coversDefaultClass \Tonic\Behat\ParallelScenarioExtension\ScenarioInfo\ScenarioInfoExtractor
+ * @covers ::__construct
  */
-class ScenarioInfoExtractorTest extends \PHPUnit_Framework_TestCase
+class ScenarioInfoExtractorTest extends TestCase
 {
-    /**
-     * @return array
-     */
-    public function provider()
+    public function provider(): array
     {
         $cases = [];
         $parser = $this->getParser();
@@ -31,7 +30,7 @@ class ScenarioInfoExtractorTest extends \PHPUnit_Framework_TestCase
 
             $cases[$directory->getBasename()] = [
                 $parser->parse(file_get_contents($featureFile), $featureFile),
-                $this->getScenarioInfo(json_decode(file_get_contents($expectedFile), true), $directory->getPathname()),
+                $this->getScenarioInfo(json_decode(file_get_contents($expectedFile), true, 512, \JSON_THROW_ON_ERROR), $directory->getPathname()),
             ];
         }
 
@@ -39,23 +38,25 @@ class ScenarioInfoExtractorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param FeatureNode $feature
-     * @param array       $expected
-     *
      * @dataProvider provider
+     *
+     * @covers ::extract
+     * @covers ::isParallel
+     * @covers ::isParallelWait
+     * @covers ::isParallelExamples
      */
-    public function test(FeatureNode $feature, array $expected)
+    public function testExtract(FeatureNode $feature, array $expected): void
     {
         $extractor = new ScenarioInfoExtractor();
         $result = $extractor->extract($feature);
 
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
-    private function getScenarioInfo(array $data, $path)
+    private function getScenarioInfo(array $data, $path): array
     {
         foreach ($data as &$group) {
-            $group = array_map(function ($data) use ($path) {
+            $group = array_map(static function ($data) use ($path) {
                 return new ScenarioInfo(sprintf('%s/%s', $path, $data['file']), $data['line']);
             }, $group);
         }
@@ -63,10 +64,7 @@ class ScenarioInfoExtractorTest extends \PHPUnit_Framework_TestCase
         return $data;
     }
 
-    /**
-     * @return Parser
-     */
-    private function getParser()
+    private function getParser(): Parser
     {
         $keywords = [
             'en' => [

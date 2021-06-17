@@ -19,9 +19,6 @@ class ScenarioProcessProfileBalance implements EventSubscriberInterface
      */
     protected $balance = [];
 
-    /**
-     * @param array $profiles
-     */
     public function __construct(array $profiles)
     {
         $this->balance = array_fill_keys($profiles, 0);
@@ -30,7 +27,7 @@ class ScenarioProcessProfileBalance implements EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             ParallelScenarioEventType::PROCESS_BEFORE_START => 'increment',
@@ -38,38 +35,32 @@ class ScenarioProcessProfileBalance implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param ProcessEvent $event
-     */
-    public function increment(ProcessEvent $event)
+    public function increment(ProcessEvent $event): void
     {
         if ($this->balance) {
             $profile = $this->getProfileNameWithMinimumBalance();
-            $this->balance[$profile]++;
+            ++$this->balance[$profile];
             /** @var ScenarioProcess $process */
             $process = $event->getProcess();
             $process->setProcessOption(new ProcessOptionScalar('profile', $profile));
         }
     }
 
-    /**
-     * @param ProcessEvent $event
-     */
-    public function decrement(ProcessEvent $event)
+    public function decrement(ProcessEvent $event): void
     {
         if ($this->balance) {
             /** @var ScenarioProcess $process */
             $process = $event->getProcess();
             /** @var ProcessOptionScalar $profileOption */
             $profileOption = $process->getProcessOption('profile');
-            $this->balance[$profileOption->getOptionValue()]--;
+            --$this->balance[$profileOption->getOptionValue()];
         }
     }
 
     /**
      * @return string
      */
-    protected function getProfileNameWithMinimumBalance()
+    protected function getProfileNameWithMinimumBalance(): string
     {
         return array_keys($this->balance, min($this->balance))[0];
     }

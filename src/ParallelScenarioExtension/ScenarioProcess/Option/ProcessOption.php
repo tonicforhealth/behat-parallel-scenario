@@ -12,7 +12,7 @@ class ProcessOption implements ProcessOptionInterface
     /**
      * @var string
      */
-    private $optionName;
+    protected $optionName;
 
     /**
      * ProcessOption constructor.

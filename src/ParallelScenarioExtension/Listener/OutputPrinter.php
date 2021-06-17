@@ -15,15 +15,10 @@ use Tonic\ParallelProcessRunner\Event\ProcessEvent;
  */
 class OutputPrinter implements EventSubscriberInterface
 {
-    /**
-     * @var OutputInterface
-     */
-    private $output;
+    /** @var OutputInterface */
+    protected $output;
 
-    /**
-     * @param OutputInterface $output
-     */
-    public function init(OutputInterface $output)
+    public function init(OutputInterface $output): void
     {
         $this->output = $output;
     }
@@ -31,7 +26,7 @@ class OutputPrinter implements EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             ParallelScenarioEventType::PROCESS_BEFORE_START => 'beforeStart',
@@ -39,18 +34,12 @@ class OutputPrinter implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param ProcessEvent $event
-     */
-    public function beforeStart(ProcessEvent $event)
+    public function beforeStart(ProcessEvent $event): void
     {
         $this->output->writeln(sprintf('START ::: %s', $event->getProcess()->getCommandLine()));
     }
 
-    /**
-     * @param ProcessEvent $event
-     */
-    public function afterStop(ProcessEvent $event)
+    public function afterStop(ProcessEvent $event): void
     {
         /** @var ScenarioProcess $process */
         $process = $event->getProcess();

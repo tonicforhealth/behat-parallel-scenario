@@ -4,7 +4,8 @@ namespace Tonic\Behat\ParallelScenarioExtension\Feature;
 
 use Behat\Gherkin\Node\FeatureNode;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Tonic\Behat\ParallelScenarioExtension\Event\ParallelScenarioEventType;
+use Tonic\Behat\ParallelScenarioExtension\Event\AfterFeatureTestEvent;
+use Tonic\Behat\ParallelScenarioExtension\Event\BeforeFeatureTestEvent;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioInfo\ScenarioInfo;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioInfo\ScenarioInfoExtractor;
 use Tonic\Behat\ParallelScenarioExtension\ScenarioProcess\ScenarioProcess;
@@ -21,27 +22,22 @@ class FeatureRunner
     /**
      * @var EventDispatcherInterface
      */
-    private $eventDispatcher;
+    protected $eventDispatcher;
     /**
      * @var ScenarioInfoExtractor
      */
-    private $scenarioInfoExtractor;
+    protected $scenarioInfoExtractor;
     /**
      * @var ScenarioProcessFactory
      */
-    private $scenarioProcessFactory;
+    protected $scenarioProcessFactory;
     /**
      * @var ParallelProcessRunner
      */
-    private $parallelProcessRunner;
+    protected $parallelProcessRunner;
 
     /**
      * FeatureRunner constructor.
-     *
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param ScenarioInfoExtractor    $infoExtractor
-     * @param ScenarioProcessFactory   $processFactory
-     * @param ParallelProcessRunner    $processRunner
      */
     public function __construct(EventDispatcherInterface $eventDispatcher, ScenarioInfoExtractor $infoExtractor, ScenarioProcessFactory $processFactory, ParallelProcessRunner $processRunner)
     {
@@ -51,32 +47,22 @@ class FeatureRunner
         $this->parallelProcessRunner = $processRunner;
     }
 
-    /**
-     * @param FeatureNode $featureNode
-     *
-     * @return int
-     */
-    public function run(FeatureNode $featureNode)
+    public function run(FeatureNode $featureNode): int
     {
         $result = 0;
 
-        $this->eventDispatcher->dispatch(ParallelScenarioEventType::FEATURE_TESTED_BEFORE);
+        $this->eventDispatcher->dispatch(new BeforeFeatureTestEvent());
         $scenarioGroups = $this->scenarioInfoExtractor->extract($featureNode);
 
         foreach ($scenarioGroups as $scenarios) {
             $result = max($result, $this->runScenarios($scenarios));
         }
-        $this->eventDispatcher->dispatch(ParallelScenarioEventType::FEATURE_TESTED_BEFORE);
+        $this->eventDispatcher->dispatch(new AfterFeatureTestEvent());
 
         return $result;
     }
 
-    /**
-     * @param int $maxParallelProcess
-     *
-     * @return $this
-     */
-    public function setMaxParallelProcess($maxParallelProcess)
+    public function setMaxParallelProcess(int $maxParallelProcess): self
     {
         $this->parallelProcessRunner->setMaxParallelProcess($maxParallelProcess);
 
@@ -85,10 +71,8 @@ class FeatureRunner
 
     /**
      * @param ScenarioInfo[] $scenarios
-     *
-     * @return int
      */
-    protected function runScenarios(array $scenarios)
+    protected function runScenarios(array $scenarios): int
     {
         $result = 0;
 

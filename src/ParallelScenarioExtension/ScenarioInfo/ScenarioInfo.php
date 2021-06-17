@@ -12,11 +12,11 @@ class ScenarioInfo
     /**
      * @var string
      */
-    private $file;
+    protected $file;
     /**
      * @var int
      */
-    private $line;
+    protected $line;
 
     /**
      * ScenarioInfo constructor.

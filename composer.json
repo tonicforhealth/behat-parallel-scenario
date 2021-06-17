@@ -6,6 +6,10 @@
         {
             "name": "oleksii.storozhylov",
             "email": "oleksii.storozhylov@tonicforhealth.com"
+        },
+        {
+            "name": "Kasper Vrind",
+            "email": "behat-parallel-scenario@vrind.dev"
         }
     ],
 
@@ -14,13 +18,17 @@
     },
 
     "require": {
+        "php": "^7.3",
+        "ext-json": "*",
         "behat/behat" : "3.*",
         "tonicforhealth/parallel-process-runner" : "1.*"
     },
 
     "require-dev": {
-        "phpunit/phpunit": "4.1.*",
-        "symfony/finder": "3.*"
+        "phpunit/phpunit": "^9.5",
+        "roave/security-advisories": "dev-latest",
+        "symfony/finder": "^4.4",
+        "friendsofphp/php-cs-fixer": "^3.0"
     },
 
     "repositories": [

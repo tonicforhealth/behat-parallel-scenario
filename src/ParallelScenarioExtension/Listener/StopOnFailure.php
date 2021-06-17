@@ -15,16 +15,9 @@ use Tonic\ParallelProcessRunner\ParallelProcessRunner;
  */
 class StopOnFailure implements EventSubscriberInterface
 {
-    /**
-     * @var ParallelProcessRunner
-     */
-    private $parallelProcessRunner;
+    /** @var ParallelProcessRunner */
+    protected $parallelProcessRunner;
 
-    /**
-     * StopOnFailureListener constructor.
-     *
-     * @param ParallelProcessRunner $processRunner
-     */
     public function __construct(ParallelProcessRunner $processRunner)
     {
         $this->parallelProcessRunner = $processRunner;
@@ -33,17 +26,14 @@ class StopOnFailure implements EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             ParallelScenarioEventType::PROCESS_AFTER_STOP => 'stopOnFailure',
         ];
     }
 
-    /**
-     * @param ProcessEvent $event
-     */
-    public function stopOnFailure(ProcessEvent $event)
+    public function stopOnFailure(ProcessEvent $event): void
     {
         /** @var ScenarioProcess $process */
         $process = $event->getProcess();
@@ -54,11 +44,9 @@ class StopOnFailure implements EventSubscriberInterface
     }
 
     /**
-     * @param int $code
-     *
      * @codeCoverageIgnore
      */
-    protected function terminate($code)
+    protected function terminate(int $code): void
     {
         exit($code);
     }
